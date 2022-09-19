@@ -1,0 +1,6 @@
+.git
+hack/*
+bin/*
+
+.cache/
+.work/
