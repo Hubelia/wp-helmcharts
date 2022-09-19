@@ -2,6 +2,12 @@ wordpress-operator [![Build Status](https://ci.bitpoke.io/api/badges/bitpoke/wor
 ===
 Bitpoke WordPress operator enables managing multiple WordPress installments at scale.
 
+This is a modified version of the Bitpoke Stack so we can use it with Rancher UI and we added some features:
+
+- Added support for Rancher UI
+- Added support for Github Apps authentication
+- Updated a few dependencies
+
 ## Goals and status
 
 The main goals of the operator are:
