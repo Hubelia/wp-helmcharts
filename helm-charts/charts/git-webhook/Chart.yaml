@@ -1,5 +1,0 @@
-apiVersion: v1
-appVersion: master
-description: Git Webhook for the Kubernetes WordPress Infrastructure
-name: git-webhook
-version: 0.0.1+master
