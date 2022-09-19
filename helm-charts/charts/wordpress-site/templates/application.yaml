@@ -47,7 +47,7 @@ spec:
           - description: Bitpoke Stack
             url: https://www.bitpoke.io/stack
           - description: Bitpoke Wordpress Operator
-            url: https://github.com/bitpoke/wordpress-operator
+            url: https://github.com/hubelia/wordpress-operator
       info:
         - name: Ingress IP
           type: Reference

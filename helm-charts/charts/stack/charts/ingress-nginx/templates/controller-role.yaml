@@ -5,6 +5,9 @@ metadata:
   labels:
     {{- include "ingress-nginx.labels" . | nindent 4 }}
     app.kubernetes.io/component: controller
+    {{- with .Values.controller.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   name: {{ include "ingress-nginx.fullname" . }}
   namespace: {{ .Release.Namespace }}
 rules:
@@ -55,6 +58,11 @@ rules:
       - get
       - list
       - watch
+  # TODO(Jintao Zhang)
+  # Once we release a new version of the controller,
+  # we will be able to remove the configmap related permissions
+  # We have used the Lease API for selection
+  # ref: https://github.com/kubernetes/ingress-nginx/pull/8921
   - apiGroups:
       - ""
     resources:
@@ -68,6 +76,21 @@ rules:
       - ""
     resources:
       - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    resourceNames:
+      - {{ .Values.controller.electionID }}
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
     verbs:
       - create
   - apiGroups:
