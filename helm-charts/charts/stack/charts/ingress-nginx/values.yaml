@@ -106,13 +106,13 @@ controller:
   ## IngressClass resources are supported since k8s >= 1.18 and required since k8s >= 1.19
   ingressClassResource:
     # -- Name of the ingressClass
-    name: nginx
+    name: hubelia-wp-stack
     # -- Is this ingressClass enabled or not
     enabled: true
     # -- Is this the default ingressClass for the cluster
     default: false
     # -- Controller-value of the controller that is processing this ingressClass
-    controllerValue: "k8s.io/ingress-nginx"
+    controllerValue: "hubelia.io/stack"
 
     # -- Parameters is a link to a custom resource containing additional
     # configuration for the controller. This is optional if the controller
