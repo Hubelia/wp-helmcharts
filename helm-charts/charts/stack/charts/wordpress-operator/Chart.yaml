@@ -1,0 +1,20 @@
+annotations:
+  category: CMS
+apiVersion: v2
+appVersion: v0.12.6
+description: Hubelia Wordpress Operator - Based on Bitpoke WordPress Operator
+home: https://www.bitpoke.io/
+keywords:
+  - wordpress
+  - bitpoke
+  - woocommerce
+  - php
+  - blog
+  - http
+  - web
+  - application
+kubeVersion: '>= 1.19.0-0'
+name: wordpress-operator
+sources:
+  - https://github.com/hubelia/wordpress-operator.git
+version: 0.12.6

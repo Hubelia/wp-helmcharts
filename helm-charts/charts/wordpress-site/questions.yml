@@ -1,0 +1,191 @@
+categories:
+  - Blog
+  - CMS
+questions:
+  - variable: image.repository
+    default: "bitpoke/wordpress-runtime"
+    description: "Image Repository"
+    type: string
+    group: Wordpress Image Settings
+    label: WordPress Image Repository
+  - variable: image.tag
+    default: "6.0.2-php-8.1"
+    description: "Wordpress Image Version"
+    type: string
+    group: Wordpress Image Settings
+    label: WordPress Image Version
+  - variable: persistence.enabled
+    default: "false"
+    description: "Enable persistent volume for WordPress (Static Files)"
+    type: boolean
+    required: true
+    label: WordPress Persistent Volume Enabled
+    show_subquestion_if: true
+    group: "Resources"
+    subquestions:
+      - variable: persistence.size
+        default: "1Gi"
+        description: "WordPress Persistent Volume Size"
+        type: string
+        label: WordPress Volume Size
+      - variable: persistence.storageClass
+        default: "longhorn"
+        description: "If undefined or null, uses the default StorageClass. Default to longhorn - change if you know what you are doing..."
+        type: storageclass
+        label: Default StorageClass for WordPress
+  - variable: site.domains.first
+    default: ""
+    description: "Site Domain 1"
+    type: string
+    required: true
+    label: Site Domain 1
+    group: "Site Settings"
+  - variable: site.domains.second
+    default: ""
+    description: "Site Domain 2"
+    type: string
+    required: false
+    label: Site Domain 2
+    group: "Site Settings"
+  - variable: site.domains.third
+    default: ""
+    description: "Site Domain 3"
+    type: string
+    required: false
+    label: Site Domain 3
+    group: "Site Settings"
+  - variable: site.domains.forth
+    default: ""
+    description: "Site Domain 4"
+    type: string
+    required: false
+    label: Site Domain 4
+    group: "Site Settings"
+  - variable: site.domains.fifth
+    default: ""
+    description: "Site Domain 5"
+    type: string
+    required: false
+    label: Site Domain 5
+    group: "Site Settings"
+  - variable: site.env
+    default: "[]"
+    description: 'Wordpress Environment Variables - Careful, not encrypted...  Use this template for the key/value pair ex: ''[{"MARIADB_HOST":"1.1.1.1","MARIADB_PASSWORD":"yoursupersecurepassword"}]'''
+    type: string
+    label: Wordpress Environment Variables
+    group: "Site Settings"
+  - variable: site.envFrom[0]
+    default: ""
+    description: "Wordpress Environment Variables - From Secret (for sensitive information.  Make sure all the Variables needed are in the secret"
+    type: secret
+    label: Wordpress Environment Variables - Secrets
+    group: "Site Settings"
+  - variable: code.git.repository
+    description: "Git Repository"
+    type: string
+    default: "https://github.com/Hubelia/wordpress-base"
+    required: true
+    label: Git Repository
+    group: "Git and Code Configuration"
+  - variable: code.git.reference
+    default: "main"
+    description: "Git Branch - reference.  You can use the branch or the commit reference ie: 3df6701bd06d97a3954b18625926753f6246c266 (recommended) "
+    type: string
+    required: true
+    label: Git Branch
+    group: "Git and Code Configuration"
+  - variable: code.git.use_github_app
+    default: "false"
+    description: "Use Github App to pull/push to github"
+    type: boolean
+    required: false
+    label: Use Github App
+    show_subquestion_if: true
+    group: Git Authentication Configuration
+    subquestions:
+      - variable: code.git.github_app_secret
+        description: "Select Secret.  It should have 2 keys app_id (application ID in Github), and 1 private_key (private key in Github)"
+        required: false
+        type: secret
+        label: Github App Secret
+  - variable: code.git.usesshkey
+    show_if: "code.git.use_github_app=false"
+    default: "false"
+    description: "Use Github with SSH Key.  If Use Github App is selected, this will be ignored"
+    type: boolean
+    required: false
+    label: Use SSH Key
+    show_subquestion_if: true
+    group: Git Authentication Configuration
+    subquestions:
+      - variable: code.git.ssh_private_key
+        default: ""
+        description: "Git Secret - SSH Private Key"
+        type: secret
+        label: Git Secret (If using a private repository)
+  - variable: code.contentSubPath
+    default: "wp-content/"
+    description: "Code Location"
+    type: string
+    label: Code location path
+    group: "Git and Code Configuration"
+  - variable: code.readOnly
+    default: "false"
+    description: "Code protection against write (recommended for production)"
+    type: boolean
+    label: Code Write Protection
+    group: "Git and Code Configuration"
+  - variable: site.resources.override
+    default: "false"
+    description: "Override Resources Allocations Defaults"
+    type: boolean
+    required: false
+    label: Override Resources Allocations
+    show_subquestion_if: true
+    group: "Resources"
+    subquestions:
+      - variable: site.resources.limits.cpu
+        default: "400m"
+        description: "CPU Limit"
+        type: string
+        label: CPU Limit
+      - variable: site.resources.limits.memory
+        default: "0.7Gi"
+        description: "Memory Limit"
+        type: string
+        label: Memory Limit
+      - variable: site.resources.requests.cpu
+        default: "200m"
+        description: "CPU Request (allocated to the instance)"
+        type: string
+        label: CPU Request
+      - variable: site.resources.requests.memory
+        default: "0.512Gi"
+        description: "Memory Request"
+        type: string
+        label: Memory Request
+# site:
+#   resources: {}
+# to automatically install wordpress
+# bootstrap:
+# title: Demo site
+# email: ping@<your domain name>
+# user:
+# password:
+
+# tls: {}
+# issuerKind: ClusterIssuer
+# issuerName: stack-default-certificate-issuer
+# acmeChallengeType: http01
+
+#  media: {}
+#  Store media library in a Google Cloud Storage bucket
+#  gcs:
+#    # google cloud project
+#    project: staging
+#    # bucket name
+#    bucket: calins-wordpress-runtime-playground
+#    # use a prefix inside the bucket to store the media files
+#    prefix: mysite/
+#    # credentials to access Google Cloud Storage
+#    google_credentials: >
