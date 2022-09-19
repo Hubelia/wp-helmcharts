@@ -3,7 +3,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.12.6
-    created: "2022-09-19T13:26:43.237039507-04:00"
+    created: "2022-09-19T15:12:56.384777727-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -17,13 +17,13 @@ entries:
       condition: nginx-ingress.enabled
       name: ingress-nginx
       repository: https://kubernetes.github.io/ingress-nginx
-      version: 4.0.8
+      version: 4.2.5
     - condition: git-webhook.enabled
       name: git-webhook
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: 49257f5750fce836dd0293a4ad3015823c6fe72b2e94ad78c4351b4091b70f5f
+    digest: 1866dd69ad16576be9a90ccd5d31384458dfa4ce58c232322cf82c9dcf972bf7
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -46,7 +46,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.8
-    created: "2022-09-19T13:26:43.237372698-04:00"
+    created: "2022-09-19T15:12:56.385111526-04:00"
     description: Helm chart for deploying a WordPress sites on Kubernetes.
     digest: 6e2f20a319da030056fef4bc41f003dd0e445b560bfa0c2e0f2c0e9dd7728565
     keywords:
@@ -68,4 +68,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.6.tgz
     version: 0.12.6
-generated: "2022-09-19T13:26:43.232572245-04:00"
+generated: "2022-09-19T15:12:56.373889984-04:00"
