@@ -32,9 +32,9 @@ entries:
     - Integration and Delivery
     kubeVersion: '>= 1.19.0-0'
     maintainers:
-    - email: hello@hubelia-wp.io
+    - email: hello@hubelia.io
       name: hubelia-wp
-      url: https://www.hubelia-wp.io
+      url: https://www.hubelia.io
     name: stack
     sources:
     - https://github.com/hubelia-wp/stack

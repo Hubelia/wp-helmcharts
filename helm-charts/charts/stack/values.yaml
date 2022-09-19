@@ -19,7 +19,7 @@ nginx-ingress:
   controller:
     ingressClassResource:
       name: hubelia-wp-stack
-      controllerValue: "hubelia-wp.io/stack"
+      controllerValue: "hubelia.io/stack"
     config:
       proxy-buffer-size: 64k
       custom-http-errors: 502,503,504
