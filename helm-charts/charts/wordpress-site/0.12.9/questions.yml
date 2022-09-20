@@ -96,6 +96,7 @@ questions:
     group: "Git and Code Configuration"
   - variable: code.git.use_github_app
     default: "false"
+    show_if: "code.git.use_ssh_key=false"
     description: "Use Github App to pull/push to github"
     type: boolean
     required: false
@@ -108,7 +109,7 @@ questions:
         required: false
         type: secret
         label: Github App Secret
-  - variable: code.git.usesshkey
+  - variable: code.git.use_ssh_key
     show_if: "code.git.use_github_app=false"
     default: "false"
     description: "Use Github with SSH Key.  If Use Github App is selected, this will be ignored"

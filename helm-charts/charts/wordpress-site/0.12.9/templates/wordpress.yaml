@@ -57,7 +57,7 @@ spec:
               key: id_rsa
               optional: true
         {{- end }}
-        {{- if .Values.code.git.git_app_secret }}
+        {{- if .Values.code.git.use_github_app }}
         - name: GITHUB_APP_ID
           valueFrom:
             secretKeyRef:
