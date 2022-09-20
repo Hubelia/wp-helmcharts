@@ -27,7 +27,7 @@ site:
 tls:
   {}
   # issuerKind: ClusterIssuer
-  # issuerName: stack-default-certificate-issuer
+  # issuerName: hubelia-wp-stack-ca-issuer
   # acmeChallengeType: http01
 
 code:
