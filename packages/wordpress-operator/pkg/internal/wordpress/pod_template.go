@@ -44,6 +44,7 @@ const (
 )
 
 const gitCloneScript = `#!/bin/bash
+printenv
 set -e
 set -o pipefail
 
@@ -101,7 +102,6 @@ fi
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
 GIT_CLONE_REF
 set -x
-printenv
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
