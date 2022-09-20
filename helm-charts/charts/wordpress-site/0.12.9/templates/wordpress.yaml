@@ -62,13 +62,13 @@ spec:
           valueFrom:
             secretKeyRef:
               name: {{ template "wordpress-site.git_app_secret" . }}
-              key: github_app_id
+              key: app_id
               optional: true
         - name: GITHUB_APP_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
               name: {{ template "wordpress-site.git_app_secret" . }}
-              key: github_app_private_key
+              key: private_key
               optional: true
         {{- end }}
     {{- end }}
