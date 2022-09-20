@@ -1,5 +1,5 @@
 apiVersion: v2
-appVersion: v0.12.6
+appVersion: v0.12.9
 dependencies:
 - condition: mysql-operator.enabled
   name: mysql-operator
@@ -8,7 +8,7 @@ dependencies:
 - condition: wordpress-operator.enabled
   name: wordpress-operator
   repository: https://hubelia.github.io/wp-helmcharts
-  version: 0.12.6
+  version: 0.12.9
 - alias: nginx-ingress
   condition: nginx-ingress.enabled
   name: ingress-nginx
@@ -33,4 +33,4 @@ maintainers:
 name: stack
 sources:
 - https://github.com/hubelia-wp/stack
-version: 0.12.3
+version: 0.12.9

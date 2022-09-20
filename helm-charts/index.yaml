@@ -2,8 +2,8 @@ apiVersion: v1
 entries:
   stack:
   - apiVersion: v2
-    appVersion: v0.12.6
-    created: "2022-09-19T20:51:10.39598137-04:00"
+    appVersion: v0.12.9
+    created: "2022-09-19T20:57:09.600036232-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -12,7 +12,7 @@ entries:
     - condition: wordpress-operator.enabled
       name: wordpress-operator
       repository: https://hubelia.github.io/wp-helmcharts
-      version: 0.12.6
+      version: 0.12.9
     - alias: nginx-ingress
       condition: nginx-ingress.enabled
       name: ingress-nginx
@@ -23,7 +23,7 @@ entries:
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: d5ee001ffa0ddbd9cefc84ea6a6cdd07787373a950b18be13f196e045cffbc68
+    digest: 5e40c64f26a9f95c6d57a93a75402a1e1d829868d7df32484d7cefa59bde5824
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -43,7 +43,7 @@ entries:
     version: 0.12.9
   - apiVersion: v2
     appVersion: v0.12.6
-    created: "2022-09-19T20:51:10.389729782-04:00"
+    created: "2022-09-19T20:57:09.591750189-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -63,7 +63,7 @@ entries:
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: 1866dd69ad16576be9a90ccd5d31384458dfa4ce58c232322cf82c9dcf972bf7
+    digest: 88e17265fe3fe448856c0a0561e738b3af92514b57865b03b343735c7e78c043
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -79,16 +79,42 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/stack-0.12.6.tgz
-    version: 0.12.6
+    - https://hubelia.github.io/wp-helmcharts/stack-0.12.3.tgz
+    version: 0.12.3
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
-    appVersion: 0.12.8
-    created: "2022-09-19T20:51:10.397226153-04:00"
+    appVersion: 0.12.9
+    created: "2022-09-19T20:57:09.60058439-04:00"
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: 3bb73831f94ab5dbd01be5cbb931eacb8409443badf0499940065a131d177ede
+    digest: 10596ae3404724617a20e467e81a6d476e58c150a73441267155cf74f193f9d2
+    keywords:
+    - wordpress
+    - CMS
+    - Web Application
+    - application
+    - web
+    - http
+    - php
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: hello@hubelia.com
+      name: Hubelia
+      url: https://www.hubelia.com
+    name: wordpress-site
+    sources:
+    - https://github.com/Hubelia/wp-helmcharts
+    urls:
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.9.tgz
+    version: 0.12.9
+  - annotations:
+      github.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: 0.12.8
+    created: "2022-09-19T20:57:09.600318347-04:00"
+    description: Helm chart for deploying a WordPress sites on Kubernetes.
+    digest: 8175cdeb1af492246d3696b9cc887d9d2c75209662e4a247e8dbc2b0e9311e94
     keywords:
     - wordpress
     - CMS
@@ -108,30 +134,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.8.tgz
     version: 0.12.8
-  - annotations:
-      github.io/license: Apache-2.0
-    apiVersion: v2
-    appVersion: 0.12.8
-    created: "2022-09-19T20:51:10.396598597-04:00"
-    description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: 6e2f20a319da030056fef4bc41f003dd0e445b560bfa0c2e0f2c0e9dd7728565
-    keywords:
-    - wordpress
-    - CMS
-    - Web Application
-    - application
-    - web
-    - http
-    - php
-    kubeVersion: '>= 1.19.0-0'
-    maintainers:
-    - email: hello@hubelia.com
-      name: Hubelia
-      url: https://www.hubelia.com
-    name: wordpress-site
-    sources:
-    - https://github.com/Hubelia/wp-helmcharts
-    urls:
-    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.6.tgz
-    version: 0.12.6
-generated: "2022-09-19T20:51:10.380614138-04:00"
+generated: "2022-09-19T20:57:09.577465535-04:00"
