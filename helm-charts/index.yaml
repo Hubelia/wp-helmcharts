@@ -3,7 +3,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2022-09-19T21:14:58.435253844-04:00"
+    created: "2022-09-20T07:04:52.737827604-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -23,7 +23,7 @@ entries:
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: 5e40c64f26a9f95c6d57a93a75402a1e1d829868d7df32484d7cefa59bde5824
+    digest: df2851b051ed3e4c7107eabb7017641f7f8851b183211e5243b362edbb9cf840
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -46,9 +46,9 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2022-09-19T21:14:58.435540546-04:00"
+    created: "2022-09-20T07:04:52.738114088-04:00"
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: 59c08281ef6adf3036895e4d4bae3c698aed9cfd2fd201ff8e82bcdc6d19f9a6
+    digest: 9ffc5071f7c5bc7552cac113bf9dd3ba1eafe1a7590917f3cc51910aa4b7007a
     keywords:
     - wordpress
     - CMS
@@ -68,4 +68,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2022-09-19T21:14:58.422993349-04:00"
+generated: "2022-09-20T07:04:52.733230012-04:00"
