@@ -3,7 +3,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.12.6
-    created: "2022-09-19T15:18:58.029507964-04:00"
+    created: "2022-09-19T20:42:39.221192747-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -39,11 +39,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/stack-0.12.9.tgz
     version: 0.12.9
   - apiVersion: v2
     appVersion: v0.12.6
-    created: "2022-09-19T15:18:58.02381903-04:00"
+    created: "2022-09-19T20:42:39.214232995-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -79,14 +79,40 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.6.tgz
+    - https://hubelia.github.io/wp-helmcharts/stack-0.12.6.tgz
     version: 0.12.6
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.8
-    created: "2022-09-19T15:18:58.030081619-04:00"
+    created: "2022-09-19T20:42:39.221793446-04:00"
+    description: Helm chart for deploying a WordPress sites on Kubernetes.
+    digest: 540cc71cf5e73a30cda326c28ffa79f2a2ef83900903a6b75d0b64007fb50b5f
+    keywords:
+    - wordpress
+    - CMS
+    - Web Application
+    - application
+    - web
+    - http
+    - php
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: hello@hubelia.com
+      name: Hubelia
+      url: https://www.hubelia.com
+    name: wordpress-site
+    sources:
+    - https://github.com/Hubelia/wp-helmcharts
+    urls:
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.8.tgz
+    version: 0.12.8
+  - annotations:
+      github.io/license: Apache-2.0
+    apiVersion: v2
+    appVersion: 0.12.8
+    created: "2022-09-19T20:42:39.221499177-04:00"
     description: Helm chart for deploying a WordPress sites on Kubernetes.
     digest: 6e2f20a319da030056fef4bc41f003dd0e445b560bfa0c2e0f2c0e9dd7728565
     keywords:
@@ -106,6 +132,6 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.6.tgz
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.6.tgz
     version: 0.12.6
-generated: "2022-09-19T15:18:58.018454952-04:00"
+generated: "2022-09-19T20:42:39.19734066-04:00"
