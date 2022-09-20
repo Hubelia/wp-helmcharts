@@ -121,8 +121,7 @@ if [ -f *.sql* ] ; then
     fi
     if [ "$IMPORT_DB" = true ] ; then
         echo "Importing database"
-        echo DB_FILE=$(echo *.sql*)
-        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < $DB_FILE
+        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < db.sql
     fi
 fi
 `

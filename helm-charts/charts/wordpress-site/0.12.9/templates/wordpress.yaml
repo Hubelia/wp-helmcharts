@@ -59,6 +59,11 @@ spec:
             secretKeyRef:
               name: {{ include "wordpress-site.fullname" . }}-db
               key: DATABASE
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "wordpress-site.fullname" . }}-db
+              key: USER
         {{- if .Values.code.git.ssh_private_key }}
         - name: SSH_RSA_PRIVATE_KEY
           valueFrom:
