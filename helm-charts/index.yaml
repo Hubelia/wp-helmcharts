@@ -3,7 +3,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2022-09-20T16:52:42.018492893-04:00"
+    created: "2022-09-20T17:03:14.430051272-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -46,9 +46,9 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2022-09-20T16:52:42.018837469-04:00"
+    created: "2022-09-20T17:03:14.430337053-04:00"
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: d03f2c7f9045b75478fd016263a9a7028e897ad8d622942a3c84f6369da39e50
+    digest: affbc9e3c84549c6d81b99c6704ed01439590baa97c764f89bce9fb9529c739a
     keywords:
     - wordpress
     - CMS
@@ -68,4 +68,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2022-09-20T16:52:42.013270313-04:00"
+generated: "2022-09-20T17:03:14.425506322-04:00"

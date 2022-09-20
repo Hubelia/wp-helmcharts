@@ -32,7 +32,7 @@ Return the secret for github app
 */}}
 {{- define "wordpress-site.db_encryption_key" -}}
 {{- $fullName := include "wordpress-site.fullname" . -}}
-{{- default $fullName .Values.code.db.encryptionKey | quote -}}
+{{- default $fullName .Values.code.db.encryption_key | quote -}}
 {{- end -}}
 
 {{/*

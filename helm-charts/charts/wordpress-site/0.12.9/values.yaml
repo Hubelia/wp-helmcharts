@@ -39,7 +39,7 @@ code:
   contentSubPath: wp-content/
   uploadSubPath: wp-content/uploads/
   db:
-    encryptionKey:
+    encryption_key:
   git:
     repository:
     reference:
