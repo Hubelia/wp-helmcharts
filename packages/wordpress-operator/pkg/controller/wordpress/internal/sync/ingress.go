@@ -24,8 +24,8 @@ import (
 
 	"github.com/presslabs/controller-util/syncer"
 
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/cmd/options"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/internal/wordpress"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/cmd/options"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/internal/wordpress"
 )
 
 const ingressClassAnnotationKey = "kubernetes.io/ingress.class"

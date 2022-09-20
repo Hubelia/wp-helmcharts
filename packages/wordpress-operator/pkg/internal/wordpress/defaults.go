@@ -22,7 +22,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/cmd/options"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/cmd/options"
 )
 
 const (

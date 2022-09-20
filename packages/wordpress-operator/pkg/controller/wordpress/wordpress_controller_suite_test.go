@@ -34,7 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/apis"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis"
 )
 
 var cfg *rest.Config

@@ -28,8 +28,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	wordpressv1alpha1 "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/apis/wordpress/v1alpha1"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/cmd/options"
+	wordpressv1alpha1 "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/cmd/options"
 )
 
 var _ = Describe("Web pod spec", func() {
