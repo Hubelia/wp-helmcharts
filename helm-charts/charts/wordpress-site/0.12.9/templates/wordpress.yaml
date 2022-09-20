@@ -49,21 +49,21 @@ spec:
       env:
         - name: HOLA_COLADA
           value: hola
-      - name: DB_USER
-        valueFrom:
-          secretKeyRef:
-            name: {{ include "wordpress-site.fullname" . }}-db
-            key: USER
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: {{ include "wordpress-site.fullname" . }}-db
-            key: PASSWORD
-      - name: DB_NAME
-        valueFrom:
-          secretKeyRef:
-            name: {{ include "wordpress-site.fullname" . }}-db
-            key: DATABASE
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "wordpress-site.fullname" . }}-db
+              key: USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "wordpress-site.fullname" . }}-db
+              key: PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "wordpress-site.fullname" . }}-db
+              key: DATABASE
         {{- if .Values.code.git.ssh_private_key }}
         - name: SSH_RSA_PRIVATE_KEY
           valueFrom:
