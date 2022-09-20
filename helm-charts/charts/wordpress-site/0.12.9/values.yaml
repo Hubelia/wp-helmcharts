@@ -40,7 +40,7 @@ code:
   uploadSubPath: wp-content/uploads/
   db:
     encryption_key:
-    encrypted_db_export:
+    encrypt_db_export:
   git:
     repository:
     reference:

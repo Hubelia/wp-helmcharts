@@ -86,7 +86,7 @@ spec:
               key: private_key
               optional: true
         {{- end }}
-        {{- if .Values.code.git.encrypted_db_export }}
+        {{- if .Values.code.db.encrypt_db_export }}
           - name: DB_ENCRYPTION_KEY
             valueFrom:
               secretKeyRef:
