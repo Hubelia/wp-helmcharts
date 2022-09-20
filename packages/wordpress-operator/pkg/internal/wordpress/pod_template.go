@@ -27,7 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	"github.com/hubelia/wordpress-operator/pkg/cmd/options"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/cmd/options"
 )
 
 const (
@@ -250,6 +250,14 @@ func (wp *Wordpress) gitCloneEnv() []corev1.EnvVar {
 			Value: wp.Spec.CodeVolumeSpec.GitDir.Repository,
 		},
 		{
+			Name:  "GITHUB_APP_PRIVATE_KEY",
+			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppPrivateKey,
+		},
+		{
+			Name:  "GITHUB_APP_ID",
+			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppID,
+		},
+		{
 			Name:  "SRC_DIR",
 			Value: codeSrcMountPath,
 		},
@@ -259,18 +267,6 @@ func (wp *Wordpress) gitCloneEnv() []corev1.EnvVar {
 		out = append(out, corev1.EnvVar{
 			Name:  "GIT_CLONE_REF",
 			Value: wp.Spec.CodeVolumeSpec.GitDir.GitRef,
-		})
-	}
-	if len(wp.Spec.CodeVolumeSpec.GitDir.GitHubAppId) > 0 {
-		out = append(out, corev1.EnvVar{
-			Name:  "GITHUB_APP_ID",
-			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppId,
-		})
-	}
-	if len(wp.Spec.CodeVolumeSpec.GitDir.GitHubAppPrivateKey) > 0 {
-		out = append(out, corev1.EnvVar{
-			Name:  "GITHUB_APP_PRIVATE_KEY",
-			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppPrivateKey,
 		})
 	}
 

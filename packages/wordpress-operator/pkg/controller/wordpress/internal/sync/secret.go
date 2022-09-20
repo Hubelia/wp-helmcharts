@@ -25,7 +25,7 @@ import (
 	"github.com/presslabs/controller-util/rand"
 	"github.com/presslabs/controller-util/syncer"
 
-	"github.com/hubelia/wordpress-operator/pkg/internal/wordpress"
+	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/pkg/internal/wordpress"
 )
 
 var generatedSalts = map[string]int{

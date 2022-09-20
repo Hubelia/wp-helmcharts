@@ -178,8 +178,8 @@ type GitVolumeSource struct {
 	// GitRef to clone (can be a branch name, but it should point to a tag or a
 	// commit hash)
 	// +optional
-	GitRef string `json:"reference,omitempty"`
-	GitHubAppId string `json:"githubappid,omitempty"`
+	GitRef              string `json:"reference,omitempty"`
+	GitHubAppID         string `json:"githubappid,omitempty"`
 	GitHubAppPrivateKey string `json:"githubappprivatekey,omitempty"`
 	// Env defines env variables  which get passed to the git clone container
 	// +optional
