@@ -120,9 +120,9 @@ if [ -f *.sql* ] ; then
         fi
     fi
     if [ "$IMPORT_DB" = true ] ; then
-        mv $(echo *.sql) db.sql
         echo "Importing database"
-        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < db.sql
+        echo DB_FILE=$(echo *.sql*)
+        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < $DB_FILE
     fi
 fi
 `

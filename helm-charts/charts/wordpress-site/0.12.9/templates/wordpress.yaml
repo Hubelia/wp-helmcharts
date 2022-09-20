@@ -47,13 +47,8 @@ spec:
       repository: {{ default "https://github.com/Hubelia/wordpress-base" .Values.code.git.repository | quote }}
       reference: {{ default "main" .Values.code.git.reference }}
       env:
-        - name: HOLA_COLADA
-          value: hola
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}-db
-              key: USER
+        - name: DB_HOST
+          value: {{ include "wordpress-site.fullname" . }}-mysql-master
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
