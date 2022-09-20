@@ -60,7 +60,7 @@ spec:
     - description: Hubelia Stack
       url: https://www.bitpoke.io/stack
     - description: Hubelia Stack Github Repository
-      url: https://github.com/hubelia/wp/stack
+      url: https://github.com/hubelia/wp-helmcharts/helm-charts/charts/stack
     notes: {{ include "stack.docs" . | quote }}
   info:
   - name: Ingress IP
