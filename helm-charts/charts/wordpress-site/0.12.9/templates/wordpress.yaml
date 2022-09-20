@@ -87,12 +87,12 @@ spec:
               optional: true
         {{- end }}
         {{- if .Values.code.db.encrypt_db_export }}
-          - name: DB_ENCRYPTION_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "wordpress-site.db_encryption_key" . }}
-                key: encryption_key
-                optional: true
+        - name: DB_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "wordpress-site.db_encryption_key" . }}
+              key: encryption_key
+              optional: true
         {{- end }}
     {{- end }}
   {{- end }}
