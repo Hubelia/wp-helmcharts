@@ -94,7 +94,7 @@ questions:
     required: true
     label: Git Branch
     group: "Git and Code Configuration"
-  - variable: code.git.encrypt_db_export
+  - variable: code.db.encrypt_db_export
     default: "false"
     description: "Encrypt the database export/import"
     type: boolean
