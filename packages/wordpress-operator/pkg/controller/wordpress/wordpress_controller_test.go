@@ -36,7 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
-	wordpressv1alpha1 "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	wordpressv1alpha1 "github.com/hubelia/wordpress-operator/pkg/apis/wordpress/v1alpha1"
 )
 
 const timeout = time.Second * 5

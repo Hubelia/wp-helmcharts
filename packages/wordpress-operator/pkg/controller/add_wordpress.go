@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/controller/wordpress"
+	"github.com/hubelia/wordpress-operator/pkg/controller/wordpress"
 )
 
 func init() {

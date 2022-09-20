@@ -27,7 +27,7 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/util/intstr"
 
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/cmd/options"
+	"github.com/hubelia/wordpress-operator/pkg/cmd/options"
 )
 
 const (

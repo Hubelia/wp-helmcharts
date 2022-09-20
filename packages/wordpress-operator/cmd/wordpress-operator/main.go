@@ -28,9 +28,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/cmd/options"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/controller"
+	"github.com/hubelia/wordpress-operator/pkg/apis"
+	"github.com/hubelia/wordpress-operator/pkg/cmd/options"
+	"github.com/hubelia/wordpress-operator/pkg/controller"
 )
 
 const genericErrorExitCode = 1

@@ -23,7 +23,7 @@ import (
 	"github.com/cooleo/slugify"
 	"k8s.io/apimachinery/pkg/labels"
 
-	wordpressv1alpha1 "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	wordpressv1alpha1 "github.com/hubelia/wordpress-operator/pkg/apis/wordpress/v1alpha1"
 )
 
 // Wordpress embeds wordpressv1alpha1.Wordpress and adds utility functions.

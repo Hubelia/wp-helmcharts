@@ -28,7 +28,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	"sigs.k8s.io/controller-runtime/pkg/envtest/printer"
 
-	. "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	. "github.com/hubelia/wordpress-operator/pkg/apis/wordpress/v1alpha1"
 )
 
 var t *envtest.Environment

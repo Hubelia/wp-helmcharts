@@ -17,7 +17,7 @@ limitations under the License.
 package controller
 
 import (
-	wpcron "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/controller/wp-cron"
+	wpcron "github.com/hubelia/wordpress-operator/pkg/controller/wp-cron"
 )
 
 func init() {

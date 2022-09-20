@@ -9,10 +9,10 @@ include build/makelib/common.mk
 GO111MODULE=on
 GO_STATIC_PACKAGES = $(GO_PROJECT)/cmd/wordpress-operator
 GOLANGCI_LINT_VERSION = 1.37.1
-GO_LDFLAGS += -X github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/version.buildDate=$(BUILD_DATE) \
-	       -X github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/version.gitVersion=$(VERSION) \
-	       -X github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/version.gitCommit=$(GIT_COMMIT) \
-	       -X github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/version.gitTreeState=$(GIT_TREE_STATE)
+GO_LDFLAGS += -X github.com/hubelia/wordpress-operator/pkg/version.buildDate=$(BUILD_DATE) \
+	       -X github.com/hubelia/wordpress-operator/pkg/version.gitVersion=$(VERSION) \
+	       -X github.com/hubelia/wordpress-operator/pkg/version.gitCommit=$(GIT_COMMIT) \
+	       -X github.com/hubelia/wordpress-operator/pkg/version.gitTreeState=$(GIT_TREE_STATE)
 include build/makelib/golang.mk
 
 DOCKER_REGISTRY ?= ghcr.io/hubelia

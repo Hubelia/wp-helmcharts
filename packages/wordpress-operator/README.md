@@ -10,7 +10,7 @@ The main goals of the operator are:
 2. Allow best practices for en masse upgrades (canary, slow rollout, etc.)
 3. Friendly to devops (monitoring, availability, scalability and backup stories solved)
 
-The project is actively developed and maintained and has reached stable beta state. Check [here](https://github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/releases) the project releases.
+The project is actively developed and maintained and has reached stable beta state. Check [here](https://github.com/hubelia/wordpress-operator/pkg/releases) the project releases.
 
 The minimum supported Kubernetes version is 1.19.
 

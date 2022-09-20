@@ -17,7 +17,7 @@ limitations under the License.
 package apis
 
 import (
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	"github.com/hubelia/wordpress-operator/pkg/apis/wordpress/v1alpha1"
 )
 
 func init() {

@@ -36,9 +36,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	wordpressv1alpha1 "github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/apis/wordpress/v1alpha1"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/controller/wordpress/internal/sync"
-	"github.com/hubelia/wp-helmcharts/packages/wordpress-operator/pkg/internal/wordpress"
+	wordpressv1alpha1 "github.com/hubelia/wordpress-operator/pkg/apis/wordpress/v1alpha1"
+	"github.com/hubelia/wordpress-operator/pkg/controller/wordpress/internal/sync"
+	"github.com/hubelia/wordpress-operator/pkg/internal/wordpress"
 )
 
 const controllerName = "wordpress-controller"
