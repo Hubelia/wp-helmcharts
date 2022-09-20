@@ -59,11 +59,6 @@ spec:
           secretKeyRef:
             name: {{ include "wordpress-site.fullname" . }}-db
             key: PASSWORD
-      - name: DB_ENCRYPTION_KEY
-        valueFrom:
-          secretKeyRef:
-            name: {{ include "wordpress-site.fullname" . }}-db
-            key: DB_ENCRYPTION_KEY
       - name: DB_NAME
         valueFrom:
           secretKeyRef:
@@ -83,6 +78,12 @@ spec:
             secretKeyRef:
               name: {{ template "wordpress-site.git_app_secret" . }}
               key: app_id
+              optional: true
+        - name: DB_ENCRYPTION_KEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "wordpress-site.db_encryption_key" . }}
+              key: encryption_key
               optional: true
         - name: GITHUB_APP_PRIVATE_KEY
           valueFrom:

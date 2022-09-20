@@ -28,6 +28,14 @@ Return the secret for github app
 {{- end -}}
 
 {{/*
+Return the secret for github app
+*/}}
+{{- define "wordpress-site.db_encryption_key" -}}
+{{- $fullName := include "wordpress-site.fullname" . -}}
+{{- default $fullName .Values.code.db.encryptionKey | quote -}}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "wordpress-site.chart" -}}
