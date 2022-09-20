@@ -94,12 +94,21 @@ questions:
     required: true
     label: Git Branch
     group: "Git and Code Configuration"
-  - variable: code.db.encryption_key
-    description: "Secret for encrypting/decrypting exports/imports of the database.  Opaque secret with the key 'encryption_key' "
-    type: secret
+  - variable: code.git.encrypted_db_export
+    default: "false"
+    description: "Encrypt the database export/import"
+    type: boolean
     required: false
-    label: DB Encryption Key
+    label: Encrypt DB Exports/Imports
+    show_subquestion_if: true
     group: "Git and Code Configuration"
+    subquestions:
+      - variable: code.db.encryption_key
+        description: "Secret for encrypting/decrypting exports/imports of the database.  Opaque secret with the key 'encryption_key' "
+        type: secret
+        required: false
+        label: DB Encryption Key
+        group: "Git and Code Configuration"
   - variable: code.git.use_github_app
     default: "false"
     description: "Use Github App to pull/push to github"

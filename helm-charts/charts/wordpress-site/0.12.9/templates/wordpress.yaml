@@ -79,18 +79,20 @@ spec:
               name: {{ template "wordpress-site.git_app_secret" . }}
               key: app_id
               optional: true
-        - name: DB_ENCRYPTION_KEY
-          valueFrom:
-            secretKeyRef:
-              name: {{ template "wordpress-site.db_encryption_key" . }}
-              key: encryption_key
-              optional: true
         - name: GITHUB_APP_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
               name: {{ template "wordpress-site.git_app_secret" . }}
               key: private_key
               optional: true
+        {{- end }}
+        {{- if .Values.code.git.encrypted_db_export }}
+          - name: DB_ENCRYPTION_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "wordpress-site.db_encryption_key" . }}
+                key: encryption_key
+                optional: true
         {{- end }}
     {{- end }}
   {{- end }}
