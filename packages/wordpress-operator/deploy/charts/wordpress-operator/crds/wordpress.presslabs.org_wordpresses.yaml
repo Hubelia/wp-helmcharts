@@ -770,12 +770,6 @@ spec:
                         reference:
                           description: GitRef to clone (can be a branch name, but it should point to a tag or a commit hash)
                           type: string
-                        githubappid:
-                          description: Github App ID for Authentication
-                          type: string
-                        githubappprivatekey:
-                          description: Github Private Key for Authentication
-                          type: string
                         repository:
                           description: Repository is the git repository for the code
                           type: string

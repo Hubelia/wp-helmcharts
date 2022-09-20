@@ -58,12 +58,12 @@ if [ ! -z "$GITHUB_APP_ID" ] ; then
     arrIN=(${IN//@// })
     GIT_CLONE_URL=$(${arrIN[1]})
     fi
-    echo $GITHUB_APP_PRIVATE_KEY > ./appcert.pem
+    echo "$GITHUB_APP_PRIVATE_KEY" > $HOME/appcert.pem
     echo "require 'openssl'
-require 'jwt'  # https://rubygems.org/gems/jwt
+require 'jwt'
 
 # Private key contents
-private_pem = File.read(\"./appcert.pem/\")
+private_pem = File.read(\"$HOME/appcert.pem\")
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
@@ -76,16 +76,18 @@ payload = {
   iss: "$GITHUB_APP_ID"
 }
 
-jwt = JWT.encode(payload, private_key, "RS256")
+jwt = JWT.encode(payload, private_key, 'RS256')
 puts jwt
-" > jwt.rb
-    TOKEN=$(ruby jwt.rb)
+" > $HOME/jwt.rb
+    cat $HOME/jwt.rb
+    TOKEN=$(ruby $HOME/jwt.rb)
     GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
     GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
     APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
-    GIT_CLONE_URL=https://x-access-token:APP_TOKEN@$GIT_CLONE_URL
+    export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+    GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
     echo "GITHUB URL IS $GIT_CLONE_URL"
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
@@ -100,11 +102,29 @@ if [ -z "$GIT_CLONE_URL" ] ; then
 fi
 
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
-GIT_CLONE_REF
 set -x
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
+if [ -f *.sql* ] ; then
+    export IMPORT_DB=true
+    if [ -f *.enc ] ; then
+        echo -f *.enc
+        if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+            echo "Decrypting database"
+            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
+            ls
+        else
+            export IMPORT_DB=false
+            echo "No \$DB_ENCRYPTION_KEY specified" >&2
+        fi
+    fi
+    if [ "$IMPORT_DB" = true ] ; then
+        mv $(echo *.sql) db.sql
+        echo "Importing database"
+        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < db.sql
+    fi
+fi
 `
 
 const prepareVolumesScriptTpl = `#!/bin/sh
@@ -248,14 +268,6 @@ func (wp *Wordpress) gitCloneEnv() []corev1.EnvVar {
 		{
 			Name:  "GIT_CLONE_URL",
 			Value: wp.Spec.CodeVolumeSpec.GitDir.Repository,
-		},
-		{
-			Name:  "GITHUB_APP_PRIVATE_KEY",
-			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppPrivateKey,
-		},
-		{
-			Name:  "GITHUB_APP_ID",
-			Value: wp.Spec.CodeVolumeSpec.GitDir.GitHubAppID,
 		},
 		{
 			Name:  "SRC_DIR",

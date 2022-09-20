@@ -772,12 +772,6 @@ spec:
                         repository:
                           description: Repository is the git repository for the code
                           type: string
-                        githubappid:
-                          description: Github App ID for Authentication
-                          type: string
-                        githubappprivatekey:
-                          description: Github Private Key for Authentication
-                          type: string
                       required:
                         - repository
                       type: object

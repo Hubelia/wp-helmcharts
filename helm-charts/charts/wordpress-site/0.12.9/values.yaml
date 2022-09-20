@@ -38,6 +38,8 @@ code:
   # available
   contentSubPath: wp-content/
   uploadSubPath: wp-content/uploads/
+  db:
+    encryptionKey:
   git:
     repository:
     reference:
