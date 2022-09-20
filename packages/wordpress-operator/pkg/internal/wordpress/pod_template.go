@@ -58,7 +58,7 @@ if [ ! -z "$GITHUB_APP_ID" ] ; then
     arrIN=(${IN//@// })
     GIT_CLONE_URL=$(${arrIN[1]})
     fi
-    echo $GITHUB_APP_PRIVATE_KEY > appcert.pem
+    echo $GITHUB_APP_PRIVATE_KEY > ./appcert.pem
     echo "require 'openssl'
 require 'jwt'  # https://rubygems.org/gems/jwt
 
