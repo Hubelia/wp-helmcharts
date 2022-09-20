@@ -1,8 +1,8 @@
 wordpress-operator [![Build Status](https://ci.bitpoke.io/api/badges/bitpoke/wordpress-operator/status.svg)](https://ci.bitpoke.io/bitpoke/wordpress-operator)
 ===
-Bitpoke WordPress operator enables managing multiple WordPress installments at scale.
+Hubelia WordPress operator enables managing multiple WordPress installments at scale.
 
-This is a modified version of the Bitpoke Stack so we can use it with Rancher UI and we added some features:
+This is a modified version of the Hubelia Stack so we can use it with Rancher UI and we added some features:
 
 - Added support for Rancher UI
 - Added support for Github Apps authentication

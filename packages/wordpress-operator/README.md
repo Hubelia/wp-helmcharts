@@ -1,6 +1,6 @@
 wordpress-operator [![Build Status](https://ci.bitpoke.io/api/badges/bitpoke/wordpress-operator/status.svg)](https://ci.bitpoke.io/bitpoke/wordpress-operator)
 ===
-Bitpoke WordPress operator enables managing multiple WordPress installments at scale.
+Hubelia WordPress operator enables managing multiple WordPress installments at scale. - Based on Bitpoke Stack
 
 ## Goals and status
 

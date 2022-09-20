@@ -49,18 +49,18 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name }}
 
   descriptor:
-    type: Bitpoke Stack
+    type: Hubelia Stack
     version: {{ .Chart.AppVersion }}
     description: {{ .Chart.Description }}
     maintainers:
-    - name: Bitpoke
+    - name: Hubelia
       url: https://www.bitpoke.io/stack
       email: hello@bitpoke.io
     links:
-    - description: Bitpoke Stack
+    - description: Hubelia Stack
       url: https://www.bitpoke.io/stack
-    - description: Bitpoke Stack Github Repository
-      url: https://github.com/bitpoke/stack
+    - description: Hubelia Stack Github Repository
+      url: https://github.com/hubelia/wp/stack
     notes: {{ include "stack.docs" . | quote }}
   info:
   - name: Ingress IP

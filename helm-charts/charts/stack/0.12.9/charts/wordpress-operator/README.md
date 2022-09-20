@@ -1,4 +1,4 @@
-# Bitpoke WordPress Operator
+# Hubelia WordPress Operator
 
 This is the helm chart for [wordpress-operator](https://github.com/bitpoke/wordpress-operator).
 

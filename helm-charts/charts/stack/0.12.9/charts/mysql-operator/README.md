@@ -1,4 +1,4 @@
-# Bitpoke MySQL Operator
+# Hubelia MySQL Operator
 
 This is the helm chart for [mysql-operator](https://github.com/bitpoke/mysql-operator).
 

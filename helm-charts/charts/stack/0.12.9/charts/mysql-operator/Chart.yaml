@@ -4,7 +4,7 @@ annotations:
       version: v1alpha1
       name: mysqlclusters.mysql.presslabs.org
       displayName: MySQLCluster
-      description: Represents a MySQL cluster managed by Bitpoke's Operator for MySQL.
+      description: Represents a MySQL cluster managed by Hubelia's Operator for MySQL.
   artifacthub.io/crdsExamples: |
     - apiVersion: v1alpha1
       kind: MysqlCluster
@@ -35,7 +35,7 @@ annotations:
   artifacthub.io/operatorCapabilities: full lifecycle
 apiVersion: v2
 appVersion: v0.6.2
-description: A helm chart for Bitpoke Operator for MySQL
+description: A helm chart for Hubelia Operator for MySQL
 home: https://www.bitpoke.io/mysql-operator/
 keywords:
 - mysql

@@ -1,4 +1,4 @@
-Bitpoke Stack, your open-source, cloud native WordPress infrastructure has been successfully deployed.
+Hubelia Stack, your open-source, cloud native WordPress infrastructure has been successfully deployed.
 
 Create your first site by running:
 

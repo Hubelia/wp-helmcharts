@@ -40,13 +40,13 @@ spec:
         version: {{ .Chart.Version }}
         description: {{ .Chart.Description }}
         maintainers:
-          - name: Bitpoke
+          - name: Hubelia
             url: https://www.bitpoke.io
             email: hello@bitpoke.io
         links:
-          - description: Bitpoke Stack
+          - description: Hubelia Stack
             url: https://www.bitpoke.io/stack
-          - description: Bitpoke Wordpress Operator
+          - description: Hubelia Wordpress Operator
             url: https://github.com/hubelia/wordpress-operator
       info:
         - name: Ingress IP

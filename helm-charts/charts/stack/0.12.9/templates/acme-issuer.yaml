@@ -63,9 +63,9 @@ metadata:
     {{- include "stack.labels" . | nindent 4 }}
 spec:
   secretName: {{ template "stack.fullname" . }}-ca
-  commonName: "Bitpoke Stack - Root CA ({{ .Release.Name }})"
+  commonName: "Hubelia Stack - Root CA ({{ .Release.Name }})"
   dnsNames:
-    - stack.bitpoke.io
+    - stack.hubelia.io
   duration: "87600h"
   isCA: true
   issuerRef:
