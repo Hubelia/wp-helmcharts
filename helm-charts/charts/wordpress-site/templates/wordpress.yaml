@@ -48,7 +48,7 @@ spec:
       reference: {{ default "main" .Values.code.git.reference }}
       env:
         - name: HOLA_COLADA
-          value: "hola"
+          value: hola
         {{- if .Values.code.git.ssh_private_key }}
         - name: SSH_RSA_PRIVATE_KEY
           valueFrom:
@@ -57,7 +57,7 @@ spec:
               key: id_rsa
               optional: true
         {{- end }}
-        {{- if .Values.code.git.use_github_app }}
+        {{- if .Values.code.git.git_app_secret }}
         - name: GITHUB_APP_ID
           valueFrom:
             secretKeyRef:
@@ -70,7 +70,7 @@ spec:
               name: {{ include "wordpress-site.git_app_secret" . }}
               key: github_app_private_key
               optional: true
-          {{- end }}
+        {{- end }}
     {{- end }}
   {{- end }}
   {{- if and .Values.media .Values.media.gcs }}
