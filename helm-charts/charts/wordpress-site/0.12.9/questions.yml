@@ -96,13 +96,12 @@ questions:
     group: "Git and Code Configuration"
   - variable: code.git.use_github_app
     default: "false"
-    show_if: "code.git.use_ssh_key=false"
     description: "Use Github App to pull/push to github"
     type: boolean
     required: false
     label: Use Github App
     show_subquestion_if: true
-    group: Git Authentication Configuration
+    group: "Git Authentication Configuration"
     subquestions:
       - variable: code.git.github_app_secret
         description: "Select Secret.  It should have 2 keys app_id (application ID in Github), and 1 private_key (private key in Github)"
@@ -110,14 +109,13 @@ questions:
         type: secret
         label: Github App Secret
   - variable: code.git.use_ssh_key
-    show_if: "code.git.use_github_app=false"
     default: "false"
     description: "Use Github with SSH Key.  If Use Github App is selected, this will be ignored"
     type: boolean
     required: false
     label: Use SSH Key
     show_subquestion_if: true
-    group: Git Authentication Configuration
+    group: "Git Authentication Configuration"
     subquestions:
       - variable: code.git.ssh_private_key
         default: ""
