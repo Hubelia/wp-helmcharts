@@ -34,7 +34,7 @@ var (
 	WordpressRuntimeImage = "docker.io/bitpoke/wordpress-runtime:6.0.2-php-8.1"
 
 	// IngressClass is the default ingress class used used for creating WordPress ingresses.
-	IngressClass = ""
+	IngressClass = "hubelia-wp-stack"
 
 	// LeaderElection determines whether or not to use leader election when starting the manager.
 	LeaderElection = false
