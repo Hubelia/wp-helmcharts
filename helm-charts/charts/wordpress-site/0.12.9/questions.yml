@@ -177,6 +177,20 @@ questions:
         description: "Memory Request"
         type: string
         label: Memory Request
+  - variable: staging.create_staging_env
+    default: "false"
+    description: "Enable Staging Environment"
+    type: boolean
+    required: false
+    label: Code Write Protection
+    group: "Staging Environment"
+    show_subquestion_if: true
+    subquestions:
+      - variable: staging.git.reference
+        default: "staging"
+        description: "Staging Branch"
+        type: string
+        label: Staging Branch
 # site:
 #   resources: {}
 # to automatically install wordpress
@@ -188,7 +202,7 @@ questions:
 
 # tls: {}
 # issuerKind: ClusterIssuer
-# issuerName: stack-default-certificate-issuer
+# issuerName: wp-manager-stack-default-certificate-issuer
 # acmeChallengeType: http01
 
 #  media: {}

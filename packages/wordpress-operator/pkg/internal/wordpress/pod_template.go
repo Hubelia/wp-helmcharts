@@ -44,7 +44,6 @@ const (
 )
 
 const gitCloneScript = `#!/bin/bash
-printenv
 set -e
 set -o pipefail
 
@@ -79,18 +78,22 @@ payload = {
 jwt = JWT.encode(payload, private_key, 'RS256')
 puts jwt
 " > $HOME/jwt.rb
-    cat $HOME/jwt.rb
     TOKEN=$(ruby $HOME/jwt.rb)
     GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
+    echo "installation id: $GITHUB_INSTALLATION_ID"
     GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
+    echo "repo name: $GITHUB_REPO_NAME"
     APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
     export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+    echo "clean url: $CLEAN_URL"
     GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+    echo "new url: $GIT_CLONE_URL"
     echo "GITHUB URL IS $GIT_CLONE_URL"
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
+        echo "Setting up SSH key"
         echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
         chmod 0400 "$HOME/.ssh/id_rsa"
         export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
@@ -102,6 +105,7 @@ if [ -z "$GIT_CLONE_URL" ] ; then
 fi
 
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
+echo $GIT_CLONE_URL
 set -x
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
@@ -109,7 +113,6 @@ git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 if [ -f *.sql* ] ; then
     export IMPORT_DB=true
     if [ -f *.enc ] ; then
-        echo -f *.enc
         if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
             echo "Decrypting database"
             echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
@@ -121,7 +124,7 @@ if [ -f *.sql* ] ; then
     fi
     if [ "$IMPORT_DB" = true ] ; then
         echo "Importing database"
-        mysql -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME < db.sql
+        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME < ./db.sql
     fi
 fi
 `

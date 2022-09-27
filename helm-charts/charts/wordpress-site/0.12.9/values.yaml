@@ -27,7 +27,7 @@ site:
 tls:
   {}
   # issuerKind: ClusterIssuer
-  # issuerName: stack-default-certificate-issuer
+  # issuerName: wp-manager-stack-default-certificate-issuer
   # acmeChallengeType: http01
 
 code:
@@ -47,6 +47,15 @@ code:
     github_app_secret:
     use_github_app:
     use_ssh_key:
+
+staging:
+  # when true, the code is mounted read-only inside the runtime container
+  readOnly: false
+  create_staging_env: false
+  # the path, within the code volume (git repo), where the 'wp-content' is
+  # available
+  git:
+    reference:
 
 
 
