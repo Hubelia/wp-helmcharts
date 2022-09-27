@@ -182,7 +182,7 @@ questions:
     description: "Enable Staging Environment"
     type: boolean
     required: false
-    label: Code Write Protection
+    label: Enable Staging Environment
     group: "Staging Environment"
     show_subquestion_if: true
     subquestions:
