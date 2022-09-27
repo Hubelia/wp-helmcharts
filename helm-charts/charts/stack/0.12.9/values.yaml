@@ -30,12 +30,12 @@ nginx-ingress:
       enabled: true
     extraArgs:
       ingress-class: hubelia-wp-stack
-      default-ssl-certificate: hubelia-wp-stack/stack-ingress-default
+      default-ssl-certificate: wordpress-manager/stack-ingress-default
   defaultBackend:
     enabled: true
     image:
       registry: docker.io
-      image: hubelia-wp/stack-default-backend
+      image: bitpoke/stack-default-backend
       tag: latest
       pullPolicy: Always
 
