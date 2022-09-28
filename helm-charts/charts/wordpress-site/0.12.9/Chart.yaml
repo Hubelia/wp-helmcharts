@@ -23,5 +23,5 @@ version: 0.12.9
 dependencies:
   - name: wordpress-site-stg
     repository: http://localhost:10191
-    condition: staging.enabled
+    condition: global.staging.create_staging_env
     version: 0.12.9

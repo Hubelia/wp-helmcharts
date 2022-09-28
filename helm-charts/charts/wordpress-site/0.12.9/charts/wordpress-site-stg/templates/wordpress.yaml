@@ -45,7 +45,7 @@ spec:
     {{- if .Values.global.code.git }}
     git:
       repository: {{ default "https://github.com/Hubelia/wordpress-base" .Values.global.code.git.repository | quote }}
-      reference: {{ default "main" .Values.global.code.git.reference }}
+      reference: {{ default "main" .Values.global.staging.git.reference }}
       env:
         - name: DB_HOST
           value: {{ include "wordpress-site.fullname" . }}-stg-mysql-master
