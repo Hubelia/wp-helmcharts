@@ -11,7 +11,7 @@ global:
     # repository: docker.io/bitpoke/wordpress-runtime
     # tag: latest
     # pullPolicy: IfNotPresent
-    # imagePullSecrets: ImagePullSecretName
+  # imagePullSecrets: ImagePullSecretName
 
   site:
     domains: {}
@@ -29,7 +29,7 @@ global:
     {}
     # issuerKind: ClusterIssuer
     # issuerName: wp-manager-stack-default-certificate-issuer
-    # acmeChallengeType: http01
+  # acmeChallengeType: http01
 
   code:
     # when true, the code is mounted read-only inside the runtime container
@@ -78,11 +78,11 @@ global:
     #    # use a prefix inside the bucket to store the media files
     #    prefix: mysite/
     #    # credentials to access Google Cloud Storage
-    #    google_credentials: >
+  #    google_credentials: >
 
   mysql:
     mysqlConf: {}
     replicaCount: 1
 
   memcached:
-    replicaCount: 1
+    enabled: false

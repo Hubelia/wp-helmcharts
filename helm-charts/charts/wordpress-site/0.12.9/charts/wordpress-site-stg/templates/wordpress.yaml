@@ -1,7 +1,7 @@
 apiVersion: wordpress.presslabs.org/v1alpha1
 kind: Wordpress
 metadata:
-  name: {{ include "wordpress-site.fullname" . }}
+  name: {{ include "wordpress-site.fullname" . }}-stg
   labels:
     app.kubernetes.io/name: wordpress
     app.kubernetes.io/part-of: wordpress
@@ -24,20 +24,20 @@ spec:
   imagePullSecrets: {{ .Values.global.image.imagePullSecrets }}
   {{- end }}
   domains:
-    - {{ .Values.global.site.domains.first }}
+    - stg-{{ .Values.global.site.domains.first }}
     {{- if .Values.global.site.domains.second }}
-    - {{ .Values.global.site.domains.second }}
+    - stg-{{ .Values.global.site.domains.second }}
     {{- end }}
     {{- if .Values.global.site.domains.third }}
-    - {{ .Values.global.site.domains.third }}
+    - stg-{{ .Values.global.site.domains.third }}
     {{- end }}
     {{- if .Values.global.site.domains.forth }}
-    - {{ .Values.global.site.domains.forth }}
+    - stg-{{ .Values.global.site.domains.forth }}
     {{- end }}
     {{- if .Values.global.site.domains.fifth }}
-    - {{ .Values.global.site.domains.fifth }}
+    - stg-{{ .Values.global.site.domains.fifth }}
     {{- end }}
-  tlsSecretRef: {{ include "wordpress-site.fullname" . }}-tls
+  tlsSecretRef: {{ include "wordpress-site.fullname" . }}-stg-tls
   {{- if .Values.global.code }}
   code:
     readOnly: {{ .Values.global.code.readOnly }}
@@ -48,27 +48,27 @@ spec:
       reference: {{ default "main" .Values.global.code.git.reference }}
       env:
         - name: DB_HOST
-          value: {{ include "wordpress-site.fullname" . }}-mysql-master
+          value: {{ include "wordpress-site.fullname" . }}-stg-mysql-master
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}-db
+              name: {{ include "wordpress-site.fullname" . }}-stg-db
               key: PASSWORD
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}-db
+              name: {{ include "wordpress-site.fullname" . }}-stg-db
               key: DATABASE
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}-db
+              name: {{ include "wordpress-site.fullname" . }}-stg-db
               key: USER
         {{- if .Values.global.code.git.ssh_private_key }}
         - name: SSH_RSA_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}
+              name: {{ include "wordpress-site.fullname" . }}-stg
               key: id_rsa
               optional: true
         {{- end }}
@@ -105,30 +105,28 @@ spec:
         - name: GOOGLE_CREDENTIALS
           valueFrom:
             secretKeyRef:
-              name: {{ include "wordpress-site.fullname" . }}
+              name: {{ include "wordpress-site.fullname" . }}-stg
               key: google_application_credentials.json
         - name: GOOGLE_PROJECT_ID
           value: {{ required "A valid media.gcs.project is required!" .Values.global.media.gcs.project | quote }}
   {{- end }}
   env:
-    - name: MEMCACHED_DISCOVERY_HOST
-      value: {{ include "wordpress-site.fullname" . }}-memcached
     - name: DB_HOST
-      value: {{ include "wordpress-site.fullname" . }}-mysql-master
+      value: {{ include "wordpress-site.fullname" . }}-stg-mysql-master
     - name: DB_USER
       valueFrom:
         secretKeyRef:
-          name: {{ include "wordpress-site.fullname" . }}-db
+          name: {{ include "wordpress-site.fullname" . }}-stg-db
           key: USER
     - name: DB_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: {{ include "wordpress-site.fullname" . }}-db
+          name: {{ include "wordpress-site.fullname" . }}-stg-db
           key: PASSWORD
     - name: DB_NAME
       valueFrom:
         secretKeyRef:
-          name: {{ include "wordpress-site.fullname" . }}-db
+          name: {{ include "wordpress-site.fullname" . }}-stg-db
           key: DATABASE
   {{- if .Values.global.site.env }}
     {{- toYaml .Values.global.site.env | nindent 4 }}
@@ -159,7 +157,7 @@ spec:
   bootstrap:
     envFrom:
       - secretRef:
-          name: {{ include "wordpress-site.fullname" . }}-bootstrap
+          name: {{ include "wordpress-site.fullname" . }}-stg-bootstrap
   {{- end }}
 
   affinity:

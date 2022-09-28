@@ -1,7 +1,7 @@
 apiVersion: mysql.presslabs.org/v1alpha1
 kind: MysqlCluster
 metadata:
-  name: {{ include "wordpress-site.fullname" . }}
+  name: {{ include "wordpress-site.fullname" . }}-stg
   labels:
     app.kubernetes.io/name: mysql
     app.kubernetes.io/part-of: wordpress
@@ -10,6 +10,6 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   replicas: {{ .Values.global.mysql.replicaCount }}
-  secretName: {{ include "wordpress-site.fullname" . }}-db
+  secretName: {{ include "wordpress-site.fullname" . }}-stg-db
   mysqlConf:
     {{ toYaml .Values.global.mysql.mysqlConf | nindent 4 }}
