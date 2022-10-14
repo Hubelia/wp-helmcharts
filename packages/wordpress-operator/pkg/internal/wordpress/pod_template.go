@@ -111,7 +111,12 @@ git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
 if [ "$WP_ENV" = "staging" ] ; then
 	echo "Staging Environment - pulling deploy plugin"
-	cd wp-content/plugins && git clone git@github.com:Hubelia/wordpress-deploy.git
+	if [ ! -z "$GITHUB_APP_ID" ] ; then
+		cd wp-content/plugins && git clone https://x-access-token:$APP_TOKEN@github.com/Hubelia/wordpress-deploy.git
+	fi
+	if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
+		cd wp-content/plugins && git clone git@github.com:Hubelia/wordpress-deploy.git -o IdentityFile=$HOME/.ssh/id_rsa
+	fi
 	cd "$SRC_DIR"
 fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"

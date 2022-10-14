@@ -127,6 +127,8 @@ spec:
         secretKeyRef:
           name: {{ include "wordpress-site.fullname" . }}-db
           key: PASSWORD
+    - name: WP_ENV
+      value: 'staging'
     - name: DB_NAME
       valueFrom:
         secretKeyRef:
