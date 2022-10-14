@@ -94,6 +94,8 @@ spec:
               key: encryption_key
               optional: true
         {{- end }}
+        - name: WP_ENV
+          value: 'staging'
     {{- end }}
   {{- end }}
   {{- if and .Values.global.media .Values.global.media.gcs }}

@@ -105,10 +105,15 @@ if [ -z "$GIT_CLONE_URL" ] ; then
 fi
 
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
-echo $GIT_CLONE_URL
+
 set -x
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
+if [ "$WP_ENV" = "staging" ] ; then
+	echo "Staging Environment - pulling deploy plugin"
+	cd wp-content/plugins && git clone git@github.com:Hubelia/wordpress-deploy.git
+	cd "$SRC_DIR"
+fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 if [ -f *.sql* ] ; then
     export IMPORT_DB=true
