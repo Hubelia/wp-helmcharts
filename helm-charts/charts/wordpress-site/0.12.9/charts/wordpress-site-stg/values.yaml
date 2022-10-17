@@ -20,11 +20,12 @@ global:
     resources: {}
     # to automatically install wordpress
     bootstrap:
-    old_url: ""
-    title: Site Title
-    email: ping@<your domain name>
-    user:
-    password:
+      enabled: false
+      old_url:
+      title:
+      email:
+      user:
+      password:
 
   tls:
     {}

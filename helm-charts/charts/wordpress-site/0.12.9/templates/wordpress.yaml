@@ -159,14 +159,18 @@ spec:
       memory: 512Mi
   {{- end }}
 
-  {{- if .Values.global.site.bootstrap }}
+  {{- if .Values.global.site.bootstrap.enabled }}
   bootstrap:
+    {{- if .Values.global.site.bootstrap.password }}
     envFrom:
       - secretRef:
           name: {{ include "wordpress-site.fullname" . }}-bootstrap
+    {{- end }}
+    {{- if .Values.global.site.bootstrap.old_url }}
     env:
       - name: WORDPRESS_BOOTSTRAP_OLD_URL
         value: {{ .Values.global.site.bootstrap.old_url | b64enc | quote }}
+    {{- end }}
   {{- end }}
 
   affinity:
