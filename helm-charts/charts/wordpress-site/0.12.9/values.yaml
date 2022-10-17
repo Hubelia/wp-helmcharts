@@ -19,11 +19,13 @@ global:
     envFrom: []
     resources: {}
     # to automatically install wordpress
-    # bootstrap:
-    # title: Demo site
-    # email: ping@<your domain name>
-    # user:
-    # password:
+    bootstrap:
+    enabled: false
+    old_url:
+    title: ""
+    email: ping@<your domain name>
+    user:
+    password:
 
   tls:
     {}
@@ -57,8 +59,6 @@ global:
     # available
     git:
       reference:
-
-
 
     #  git:
     #    repository: git@github.com/bitpoke/wordpress-basic-demo
