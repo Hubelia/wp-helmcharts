@@ -74,6 +74,25 @@ questions:
     type: string
     label: Wordpress Environment Variables
     group: "Site Settings"
+  - variable: global.site.bootstrap.enabled
+    default: "false"
+    description: "Bootstrap Wordpress or change old URL"
+    type: boolean
+    required: true
+    label: Bootstrap Wordpress
+    show_subquestion_if: true
+    group: "Bootstrap"
+    subquestions:
+      - variable: global.site.bootstrap.old_url
+        default: ""
+        description: "Type the domain that is currently in use if importing an existing database"
+        type: string
+        label: Old Wordpress URL
+      # - variable: global.site.bootstrap.title
+      #   default: "longhorn"
+      #   description: "If undefined or null, uses the default StorageClass. Default to longhorn - change if you know what you are doing..."
+      #   type: storageclass
+      #   label: Default StorageClass for WordPress
   - variable: global.site.envFrom[0]
     default: ""
     description: "Wordpress Environment Variables - From Secret (for sensitive information.  Make sure all the Variables needed are in the secret"

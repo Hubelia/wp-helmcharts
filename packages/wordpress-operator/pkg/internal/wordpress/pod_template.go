@@ -134,7 +134,7 @@ if [ -f *.sql* ] ; then
     fi
     if [ "$IMPORT_DB" = true ] ; then
         echo "Importing database"
-        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME < ./db.sql
+        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
     fi
 fi
 `
@@ -568,6 +568,37 @@ func (wp *Wordpress) installWPContainer() []corev1.Container {
 				"$(WORDPRESS_BOOTSTRAP_USER)",
 				"$(WORDPRESS_BOOTSTRAP_PASSWORD)",
 				"$(WORDPRESS_BOOTSTRAP_EMAIL)",
+			},
+		},
+		{
+			Name:            "update-wp-url",
+			Image:           wp.Spec.Image,
+			VolumeMounts:    wp.volumeMounts(),
+			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
+			Resources:       wp.Spec.Resources,
+			SecurityContext: wp.securityContext(),
+			Command:         []string{"wp"},
+			Args: []string{
+				"search-replace",
+				"//$(WORDPRESS_BOOTSTRAP_OLD_URL)",
+				"//" + wp.HomeURL(),
+				"--allow-root",
+			},
+		},
+		{
+			Name:            "update-wp-url",
+			Image:           wp.Spec.Image,
+			VolumeMounts:    wp.volumeMounts(),
+			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
+			Resources:       wp.Spec.Resources,
+			SecurityContext: wp.securityContext(),
+			Command:         []string{"wp"},
+			Args: []string{
+				"rewrite",
+				"flush",
+				"--allow-root",
 			},
 		},
 	}
