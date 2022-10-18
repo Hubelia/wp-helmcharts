@@ -107,6 +107,10 @@ cd "$SRC_DIR"
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 `
 
+const gitPushScript = `#!/bin/sh
+echo "Pushing to $GIT_CLONE_URL"
+`
+
 const prepareVolumesScriptTpl = `#!/bin/sh
 test -d /mnt/code && chown {{ .wwwDataUserID }}:{{ .wwwDataUserID }} /mnt/code
 test -d /mnt/media && chown {{ .wwwDataUserID }}:{{ .wwwDataUserID }} /mnt/media
@@ -441,6 +445,23 @@ func (wp *Wordpress) gitCloneContainer() corev1.Container {
 	}
 }
 
+func (wp *Wordpress) gitPushContainer() corev1.Container {
+	return corev1.Container{
+		Name:    "git-push",
+		Args:    []string{"/bin/bash", "-c", gitPushScript},
+		Image:   options.GitCloneImage,
+		Env:     wp.gitCloneEnv(),
+		EnvFrom: wp.Spec.CodeVolumeSpec.GitDir.EnvFrom,
+		VolumeMounts: []corev1.VolumeMount{
+			{
+				Name:      codeVolumeName,
+				MountPath: codeSrcMountPath,
+			},
+		},
+		SecurityContext: wp.securityContext(),
+	}
+}
+
 // nolint: funlen
 func (wp *Wordpress) prepareVolumesContainer() corev1.Container {
 	var script bytes.Buffer
@@ -722,6 +743,7 @@ func (wp *Wordpress) JobPodTemplateSpec(cmd ...string) (out corev1.PodTemplateSp
 		SecurityContext: wp.securityContext(),
 	}
 	out.Spec.Containers = append([]corev1.Container{wordpressContainer}, wp.Spec.Sidecars...)
+	out.Spec.Containers = append(out.Spec.Containers, wp.gitPushContainer())
 
 	out.Spec.Volumes = wp.volumes()
 
