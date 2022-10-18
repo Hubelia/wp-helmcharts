@@ -44,6 +44,7 @@ const (
 )
 
 const gitCloneScript = `#!/bin/bash
+printenv
 set -e
 set -o pipefail
 
@@ -57,12 +58,12 @@ if [ ! -z "$GITHUB_APP_ID" ] ; then
     arrIN=(${IN//@// })
     GIT_CLONE_URL=$(${arrIN[1]})
     fi
-    echo "$GITHUB_APP_PRIVATE_KEY" > $HOME/appcert.pem
+    echo $GITHUB_APP_PRIVATE_KEY > $HOME/appcert.pem
     echo "require 'openssl'
-require 'jwt'
+require 'jwt'  # https://rubygems.org/gems/jwt
 
 # Private key contents
-private_pem = File.read(\"$HOME/appcert.pem\")
+private_pem = File.read(\"$HOME/appcert.pem/\")
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
@@ -75,25 +76,19 @@ payload = {
   iss: "$GITHUB_APP_ID"
 }
 
-jwt = JWT.encode(payload, private_key, 'RS256')
+jwt = JWT.encode(payload, private_key, "RS256")
 puts jwt
-" > $HOME/jwt.rb
-    TOKEN=$(ruby $HOME/jwt.rb)
+" > jwt.rb
+    TOKEN=$(ruby jwt.rb)
     GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
-    echo "installation id: $GITHUB_INSTALLATION_ID"
     GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
-    echo "repo name: $GITHUB_REPO_NAME"
     APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
-    export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
-    echo "clean url: $CLEAN_URL"
-    GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
-    echo "new url: $GIT_CLONE_URL"
+    GIT_CLONE_URL=https://x-access-token:APP_TOKEN@$GIT_CLONE_URL
     echo "GITHUB URL IS $GIT_CLONE_URL"
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
-        echo "Setting up SSH key"
         echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
         chmod 0400 "$HOME/.ssh/id_rsa"
         export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
@@ -105,49 +100,11 @@ if [ -z "$GIT_CLONE_URL" ] ; then
 fi
 
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
-
+GIT_CLONE_REF
 set -x
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
-if [ "$WP_ENV" = "staging" ] ; then
-	echo "Staging Environment - pulling deploy plugin"
-	if [ ! -z "$GITHUB_APP_ID" ] ; then
-		cd wp-content/plugins && git clone https://x-access-token:$APP_TOKEN@github.com/Hubelia/wordpress-deploy.git
-	fi
-	if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
-		cd wp-content/plugins && git clone git@github.com:Hubelia/wordpress-deploy.git -o IdentityFile=$HOME/.ssh/id_rsa
-	fi
-	cd "$SRC_DIR"
-fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
-if [ -f *.sql* ] ; then
-    export IMPORT_DB=true
-    if [ -f *.enc ] ; then
-        if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
-            echo "Decrypting database"
-            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
-            ls
-        else
-            export IMPORT_DB=false
-            echo "No \$DB_ENCRYPTION_KEY specified" >&2
-        fi
-    fi
-    if [ "$IMPORT_DB" = true ] ; then
-        echo "Importing database"
-        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
-    fi
-fi
-`
-
-const wpBootstrapScript = `#!/bin/bash
-export DECODED_URL=$(echo $WORDPRESS_BOOTSTRAP_OLD_URL | base64 --decode)
-if [ ! -z "$DECODED_URL" ] ; then
-	echo $DECODED_URL
-	echo $WP_HOME
-    wp search-replace https://$DECODED_URL $WP_HOME --allow-root
-	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
-	wp rewrite flush --allow-root
-fi
 `
 
 const prepareVolumesScriptTpl = `#!/bin/sh
@@ -580,16 +537,6 @@ func (wp *Wordpress) installWPContainer() []corev1.Container {
 				"$(WORDPRESS_BOOTSTRAP_PASSWORD)",
 				"$(WORDPRESS_BOOTSTRAP_EMAIL)",
 			},
-		},
-		{
-			Name:            "update-wp-config",
-			Image:           wp.Spec.Image,
-			VolumeMounts:    wp.volumeMounts(),
-			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
-			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
-			Resources:       wp.Spec.Resources,
-			SecurityContext: wp.securityContext(),
-			Args:            []string{"/bin/bash", "-c", wpBootstrapScript},
 		},
 	}
 }

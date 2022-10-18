@@ -14,11 +14,8 @@ spec:
       image: nginx:1.17.1
       imagePullPolicy: IfNotPresent
       ports:
-        - containerPort: 80
+        - containerPort: 81
           name: http
-      volumeMounts:
-        - name: nginx-config
-          mountPath: /etc/nginx/conf.d
       resources:
         limits:
           cpu: 100m
