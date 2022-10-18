@@ -139,6 +139,17 @@ if [ -f *.sql* ] ; then
 fi
 `
 
+const wpBootstrapScript = `#!/bin/bash
+export DECODED_URL=$(echo $WORDPRESS_BOOTSTRAP_OLD_URL | base64 --decode)
+if [ ! -z "$DECODED_URL" ] ; then
+	echo $DECODED_URL
+	echo $WP_HOME
+    wp search-replace https://$DECODED_URL $WP_HOME --allow-root
+	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+	wp rewrite flush --allow-root
+fi
+`
+
 const prepareVolumesScriptTpl = `#!/bin/sh
 test -d /mnt/code && chown {{ .wwwDataUserID }}:{{ .wwwDataUserID }} /mnt/code
 test -d /mnt/media && chown {{ .wwwDataUserID }}:{{ .wwwDataUserID }} /mnt/media
@@ -571,35 +582,14 @@ func (wp *Wordpress) installWPContainer() []corev1.Container {
 			},
 		},
 		{
-			Name:            "update-wp-url",
+			Name:            "update-wp-config",
 			Image:           wp.Spec.Image,
 			VolumeMounts:    wp.volumeMounts(),
 			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
 			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
 			Resources:       wp.Spec.Resources,
 			SecurityContext: wp.securityContext(),
-			Command:         []string{"wp"},
-			Args: []string{
-				"search-replace",
-				"//$(WORDPRESS_BOOTSTRAP_OLD_URL)",
-				"//" + wp.HomeURL(),
-				"--allow-root",
-			},
-		},
-		{
-			Name:            "update-wp-url",
-			Image:           wp.Spec.Image,
-			VolumeMounts:    wp.volumeMounts(),
-			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
-			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
-			Resources:       wp.Spec.Resources,
-			SecurityContext: wp.securityContext(),
-			Command:         []string{"wp"},
-			Args: []string{
-				"rewrite",
-				"flush",
-				"--allow-root",
-			},
+			Args:            []string{"/bin/bash", "-c", wpBootstrapScript},
 		},
 	}
 }
