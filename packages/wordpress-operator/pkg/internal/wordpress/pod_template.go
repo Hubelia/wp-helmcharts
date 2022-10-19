@@ -44,7 +44,6 @@ const (
 )
 
 const gitCloneScript = `#!/bin/bash
-printenv
 set -e
 set -o pipefail
 
@@ -58,12 +57,12 @@ if [ ! -z "$GITHUB_APP_ID" ] ; then
     arrIN=(${IN//@// })
     GIT_CLONE_URL=$(${arrIN[1]})
     fi
-    echo $GITHUB_APP_PRIVATE_KEY > $HOME/appcert.pem
+    echo "$GITHUB_APP_PRIVATE_KEY" > $HOME/appcert.pem
     echo "require 'openssl'
-require 'jwt'  # https://rubygems.org/gems/jwt
+require 'jwt'
 
 # Private key contents
-private_pem = File.read(\"$HOME/appcert.pem/\")
+private_pem = File.read(\"$HOME/appcert.pem\")
 private_key = OpenSSL::PKey::RSA.new(private_pem)
 
 # Generate the JWT
@@ -76,19 +75,25 @@ payload = {
   iss: "$GITHUB_APP_ID"
 }
 
-jwt = JWT.encode(payload, private_key, "RS256")
+jwt = JWT.encode(payload, private_key, 'RS256')
 puts jwt
-" > jwt.rb
-    TOKEN=$(ruby jwt.rb)
+" > $HOME/jwt.rb
+    TOKEN=$(ruby $HOME/jwt.rb)
     GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
+    echo "installation id: $GITHUB_INSTALLATION_ID"
     GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
+    echo "repo name: $GITHUB_REPO_NAME"
     APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
-    GIT_CLONE_URL=https://x-access-token:APP_TOKEN@$GIT_CLONE_URL
+    export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+    echo "clean url: $CLEAN_URL"
+    GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+    echo "new url: $GIT_CLONE_URL"
     echo "GITHUB URL IS $GIT_CLONE_URL"
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
+        echo "Setting up SSH key"
         echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
         chmod 0400 "$HOME/.ssh/id_rsa"
         export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
@@ -100,15 +105,154 @@ if [ -z "$GIT_CLONE_URL" ] ; then
 fi
 
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
-GIT_CLONE_REF
+
 set -x
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
+if [ "$WP_ENV" = "staging" ] ; then
+	echo "Staging Environment - pulling deploy plugin"
+	if [ ! -z "$GITHUB_APP_ID" ] ; then
+		cd wp-content/plugins && git clone https://x-access-token:$APP_TOKEN@github.com/Hubelia/wordpress-deploy.git
+	fi
+	if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
+		cd wp-content/plugins && git clone git@github.com:Hubelia/wordpress-deploy.git -o IdentityFile=$HOME/.ssh/id_rsa
+	fi
+	cd "$SRC_DIR"
+fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
+if [ -f *.sql* ] ; then
+    export IMPORT_DB=true
+    if [ -f *.enc ] ; then
+        if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+            echo "Decrypting database"
+            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
+            ls
+        else
+            export IMPORT_DB=false
+            echo "No \$DB_ENCRYPTION_KEY specified" >&2
+        fi
+    fi
+    if [ "$IMPORT_DB" = true ] ; then
+        echo "Importing database"
+        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
+    fi
+fi
+`
+
+const wpBootstrapScript = `#!/bin/bash
+export DECODED_URL=$(echo $WORDPRESS_BOOTSTRAP_OLD_URL | base64 --decode)
+if [ ! -z "$DECODED_URL" ] ; then
+	echo $DECODED_URL
+	echo $WP_HOME
+    wp search-replace https://$DECODED_URL $WP_HOME --allow-root
+	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+	wp rewrite flush --allow-root
+fi
+`
+
+const wpActivatePluginsScript = `#!/bin/bash
+if [ "$WP_ENV" = "staging" ] ; then
+	wp plugin activate wordpress-deploy | true
+fi
 `
 
 const gitPushScript = `#!/bin/sh
-echo "Pushing to $GIT_CLONE_URL"
+echo "Pushing to git"
+while true; do
+	echo "$(date) Checking for changes..." >> /tmp/myapp.log ;
+	if [ -f /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
+		echo "    $(date) Deploying to production" >> /tmp/myapp.log ;
+		rm /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
+		set -e
+		set -o pipefail
+
+		export HOME="$(mktemp -d)"
+		export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/knonw_hosts -o StrictHostKeyChecking=no"
+
+		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
+
+		if [ ! -z "$GITHUB_APP_ID" ] ; then
+			if [[ "$GIT_CLONE_URL" == *"@"* ]]; then
+			arrIN=(${IN//@// })
+			GIT_CLONE_URL=$(${arrIN[1]})
+			fi
+			echo "$GITHUB_APP_PRIVATE_KEY" > $HOME/appcert.pem
+			echo "require 'openssl'
+		require 'jwt'
+
+		# Private key contents
+		private_pem = File.read(\"$HOME/appcert.pem\")
+		private_key = OpenSSL::PKey::RSA.new(private_pem)
+
+		# Generate the JWT
+		payload = {
+		# issued at time, 60 seconds in the past to allow for clock drift
+		iat: Time.now.to_i - 60,
+		# JWT expiration time (10 minute maximum)
+		exp: Time.now.to_i + (10 * 60),
+		# GitHub App's identifier
+		iss: "$GITHUB_APP_ID"
+		}
+
+		jwt = JWT.encode(payload, private_key, 'RS256')
+		puts jwt
+		" > $HOME/jwt.rb
+			TOKEN=$(ruby $HOME/jwt.rb)
+			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
+			echo "installation id: $GITHUB_INSTALLATION_ID"
+			GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
+			echo "repo name: $GITHUB_REPO_NAME"
+			APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
+			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
+			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
+			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+			echo "clean url: $CLEAN_URL"
+			GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+			echo "new url: $GIT_CLONE_URL"
+			echo "GITHUB URL IS $GIT_CLONE_URL"
+		fi
+		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
+				echo "Setting up SSH key"
+				echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
+				chmod 0400 "$HOME/.ssh/id_rsa"
+				export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
+		fi
+
+		if [ -z "$GIT_CLONE_URL" ] ; then
+			echo "No \$GIT_CLONE_URL specified" >&2
+			exit 1
+		fi
+
+		find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
+
+		set -x
+		git clone "$GIT_CLONE_URL" "$SRC_DIR"
+		cd "$SRC_DIR"
+		if [ "$WP_ENV" = "staging" ] ; then
+			echo "Staging Environment - pulling deploy plugin"
+			cd "$SRC_DIR"
+		fi
+		git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
+		if [ -f *.sql* ] ; then
+			export IMPORT_DB=true
+			if [ -f *.enc ] ; then
+				if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+					echo "Decrypting database"
+					echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
+					ls
+				else
+					export IMPORT_DB=false
+					echo "No \$DB_ENCRYPTION_KEY specified" >&2
+				fi
+			fi
+			if [ "$IMPORT_DB" = true ] ; then
+				echo "Importing database"
+				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
+			fi
+		fi
+	fi
+	sleep 60;
+done
 `
 
 const prepareVolumesScriptTpl = `#!/bin/sh
@@ -559,6 +703,23 @@ func (wp *Wordpress) installWPContainer() []corev1.Container {
 				"$(WORDPRESS_BOOTSTRAP_EMAIL)",
 			},
 		},
+		{
+			Name:            "update-wp-config",
+			Image:           wp.Spec.Image,
+			VolumeMounts:    wp.volumeMounts(),
+			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
+			SecurityContext: wp.securityContext(),
+			Args:            []string{"/bin/bash", "-c", wpBootstrapScript},
+		},
+		{
+			Name:            "activate-wp-plugins",
+			Image:           wp.Spec.Image,
+			VolumeMounts:    wp.volumeMounts(),
+			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+			SecurityContext: wp.securityContext(),
+			Args:            []string{"/bin/bash", "-c", wpActivatePluginsScript},
+		},
 	}
 }
 
@@ -695,6 +856,10 @@ func (wp *Wordpress) WebPodTemplateSpec() (out corev1.PodTemplateSpec) {
 	}
 	out.Spec.Containers = append([]corev1.Container{wordpressContainer}, wp.Spec.Sidecars...)
 
+	if strings.HasSuffix(wp.Name, "-stg") {
+		out.Spec.Containers = append(out.Spec.Containers, wp.gitPushContainer())
+	}
+
 	out.Spec.Volumes = wp.volumes()
 
 	if len(wp.Spec.NodeSelector) > 0 {
@@ -743,7 +908,6 @@ func (wp *Wordpress) JobPodTemplateSpec(cmd ...string) (out corev1.PodTemplateSp
 		SecurityContext: wp.securityContext(),
 	}
 	out.Spec.Containers = append([]corev1.Container{wordpressContainer}, wp.Spec.Sidecars...)
-	out.Spec.Containers = append(out.Spec.Containers, wp.gitPushContainer())
 
 	out.Spec.Volumes = wp.volumes()
 

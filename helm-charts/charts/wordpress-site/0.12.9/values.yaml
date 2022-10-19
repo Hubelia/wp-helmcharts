@@ -57,6 +57,7 @@ global:
     create_staging_env: false
     # the path, within the code volume (git repo), where the 'wp-content' is
     # available
+    domains: {}
     git:
       reference:
 

@@ -24,18 +24,18 @@ spec:
   imagePullSecrets: {{ .Values.global.image.imagePullSecrets }}
   {{- end }}
   domains:
-    - stg-{{ .Values.global.site.domains.first }}
-    {{- if .Values.global.site.domains.second }}
-    - stg-{{ .Values.global.site.domains.second }}
+    - {{ required "A valid domain needs to be specified for staging env!" .Values.global.staging.domains.first }}
+    {{- if .Values.global.staging.domains.second }}
+    - {{ .Values.global.staging.domains.second }}
     {{- end }}
-    {{- if .Values.global.site.domains.third }}
-    - stg-{{ .Values.global.site.domains.third }}
+    {{- if .Values.global.staging.domains.third }}
+    - {{ .Values.global.staging.domains.third }}
     {{- end }}
-    {{- if .Values.global.site.domains.forth }}
-    - stg-{{ .Values.global.site.domains.forth }}
+    {{- if .Values.global.staging.domains.forth }}
+    - {{ .Values.global.staging.domains.forth }}
     {{- end }}
-    {{- if .Values.global.site.domains.fifth }}
-    - stg-{{ .Values.global.site.domains.fifth }}
+    {{- if .Values.global.staging.domains.fifth }}
+    - {{ .Values.global.staging.domains.fifth }}
     {{- end }}
   tlsSecretRef: {{ include "wordpress-site.fullname" . }}-stg-tls
   {{- if .Values.global.code }}

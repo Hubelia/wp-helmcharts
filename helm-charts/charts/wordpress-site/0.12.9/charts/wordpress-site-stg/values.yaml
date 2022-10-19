@@ -59,6 +59,7 @@ global:
     # available
     git:
       reference:
+    domains: {}
 
     #  git:
     #    repository: git@github.com/bitpoke/wordpress-basic-demo

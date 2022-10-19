@@ -210,6 +210,36 @@ questions:
         description: "Staging Branch"
         type: string
         label: Staging Branch
+      - variable: global.staging.domains.first
+        default: ""
+        description: "Staging Site Domain 1"
+        type: string
+        required: true
+        label: Site Domain 1
+      - variable: global.staging.domains.second
+        default: ""
+        description: "Staging Site Domain 2"
+        type: string
+        required: false
+        label: Site Domain 2
+      - variable: global.staging.domains.third
+        default: ""
+        description: "Staging Site Domain 3"
+        type: string
+        required: false
+        label: Site Domain 3
+      - variable: global.staging.domains.forth
+        default: ""
+        description: "Staging Site Domain 4"
+        type: string
+        required: false
+        label: Site Domain 4
+      - variable: global.staging.domains.fifth
+        default: ""
+        description: "Staging Site Domain 5"
+        type: string
+        required: false
+        label: Site Domain 5
 # site:
 #   resources: {}
 # to automatically install wordpress
