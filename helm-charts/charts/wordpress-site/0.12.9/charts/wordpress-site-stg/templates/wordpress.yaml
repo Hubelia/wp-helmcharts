@@ -54,6 +54,11 @@ spec:
             secretKeyRef:
               name: {{ include "wordpress-site.fullname" . }}-stg-db
               key: PASSWORD
+        - name: DB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "wordpress-site.fullname" . }}-stg-db
+              key: ROOT_PASSWORD
         - name: DB_NAME
           valueFrom:
             secretKeyRef:

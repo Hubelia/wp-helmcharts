@@ -134,7 +134,7 @@ if [ -f *.sql* ] ; then
     fi
     if [ "$IMPORT_DB" = true ] ; then
         echo "Importing database"
-        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
+        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
     fi
 fi
 `
@@ -151,9 +151,7 @@ fi
 `
 
 const wpActivatePluginsScript = `#!/bin/bash
-if [ "$WP_ENV" = "staging" ] ; then
-	wp plugin activate wordpress-deploy | true
-fi
+wp plugin activate wordpress-deploy | true
 `
 
 const gitPushScript = `#!/bin/sh
@@ -162,7 +160,6 @@ while true; do
 	echo "$(date) Checking for changes..." >> /tmp/myapp.log ;
 	if [ -f /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
 		echo "    $(date) Deploying to production" >> /tmp/myapp.log ;
-		rm /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
 		set -e
 		set -o pipefail
 
@@ -198,7 +195,8 @@ while true; do
 		puts jwt
 		" > $HOME/jwt.rb
 			TOKEN=$(ruby $HOME/jwt.rb)
-			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
+			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" \
+			-H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
 			echo "installation id: $GITHUB_INSTALLATION_ID"
 			GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
 			echo "repo name: $GITHUB_REPO_NAME"
@@ -226,30 +224,25 @@ while true; do
 		find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
 
 		set -x
-		git clone "$GIT_CLONE_URL" "$SRC_DIR"
+		# git clone "$GIT_CLONE_URL" "$SRC_DIR"
 		cd "$SRC_DIR"
+		ls -la
+		pwd
 		if [ "$WP_ENV" = "staging" ] ; then
 			echo "Staging Environment - pulling deploy plugin"
 			cd "$SRC_DIR"
 		fi
-		git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
-		if [ -f *.sql* ] ; then
-			export IMPORT_DB=true
-			if [ -f *.enc ] ; then
-				if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
-					echo "Decrypting database"
-					echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
-					ls
-				else
-					export IMPORT_DB=false
-					echo "No \$DB_ENCRYPTION_KEY specified" >&2
-				fi
-			fi
-			if [ "$IMPORT_DB" = true ] ; then
-				echo "Importing database"
-				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
-			fi
+		# git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
+		echo "Importing database"
+		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 > $DB_NAME.sql
+		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
+		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+			echo "Encrypting database"
+			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql -out $DB_NAME.sql.enc -pass stdin
+			rm $DB_NAME.sql
+			ls
 		fi
+		rm /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
 	fi
 	sleep 60;
 done
