@@ -151,7 +151,7 @@ fi
 `
 
 const wpActivatePluginsScript = `#!/bin/bash
-wp plugin activate wordpress-deploy | true
+wp plugin activate wordpress-deploy || true
 `
 
 const gitPushScript = `#!/bin/sh
@@ -202,7 +202,7 @@ while true; do
 			echo "repo name: $GITHUB_REPO_NAME"
 			APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
-			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
+			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"write"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
 			echo "clean url: $CLEAN_URL"
 			GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
@@ -221,30 +221,39 @@ while true; do
 			exit 1
 		fi
 
-		find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
-
 		set -x
 		# git clone "$GIT_CLONE_URL" "$SRC_DIR"
 		cd "$SRC_DIR"
 		ls -la
 		pwd
-		if [ "$WP_ENV" = "staging" ] ; then
-			echo "Staging Environment - pulling deploy plugin"
-			cd "$SRC_DIR"
-		fi
 		# git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 		echo "Importing database"
+		rm -rf *.sql.enc || true
+		rm -rf *.sql || true
 		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 > $DB_NAME.sql
-		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./db.sql
+		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./$DB_NAME.sql
 		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 			echo "Encrypting database"
 			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql -out $DB_NAME.sql.enc -pass stdin
-			rm $DB_NAME.sql
+			echo "wp-content/plugins/wordpress-deploy" >> .gitignore
+			git rm -r --cached *.sql || true
+			git rm -r --cached *.sql.enc || true
+			rm $DB_NAME.sql || true
+			rm -rf *.sql || true
+			git add *
+			git status
 			ls
+			git config --global user.email "deploy@hubelia.dev"
+			git config --global user.name "Hubelia - Wordpress Deploy"
+			git pull origin $GIT_CLONE_REF
+			git commit -am "Publish to Production - $(date)"
+			echo $GIT_CLONE_URL
+			git remote set-url origin $GIT_CLONE_URL
+			git push origin $GIT_CLONE_REF
 		fi
-		rm /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
+		rm -rf /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
 	fi
-	sleep 60;
+	sleep 30;
 done
 `
 

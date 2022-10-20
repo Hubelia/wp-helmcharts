@@ -59,6 +59,8 @@ spec:
             secretKeyRef:
               name: {{ include "wordpress-site.fullname" . }}-stg-db
               key: ROOT_PASSWORD
+        - name: PROD_GIT_CLONE_BRANCH
+          value: {{ .Values.global.code.git.reference }}
         - name: DB_NAME
           valueFrom:
             secretKeyRef:
