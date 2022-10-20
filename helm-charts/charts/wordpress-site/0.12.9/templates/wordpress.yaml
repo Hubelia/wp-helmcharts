@@ -166,13 +166,14 @@ spec:
       - secretRef:
           name: {{ include "wordpress-site.fullname" . }}-bootstrap
     {{- end }}
-    {{- if .Values.global.site.bootstrap.old_url }}
+    
     env:
+    {{- if .Values.global.site.bootstrap.old_url }}
       - name: WORDPRESS_BOOTSTRAP_OLD_URL
         value: {{ .Values.global.site.bootstrap.old_url | b64enc | quote }}
+    {{- end }}
       - name: WORDPRESS_BOOTSTRAP_STAGING_URL
         value: {{ .Values.global.staging.domains.first | b64enc | quote }}
-    {{- end }}
   {{- end }}
 
   affinity:

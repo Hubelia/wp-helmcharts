@@ -147,15 +147,14 @@ if [ ! -z "$DECODED_URL" ] ; then
 	echo $WP_HOME
     wp search-replace https://$DECODED_URL $WP_HOME --allow-root
 	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
-	wp rewrite flush --allow-root
 fi
 if [ ! -z "$STAGING_URL" ] ; then
 	echo $STAGING_URL
 	echo $WP_HOME
     wp search-replace https://$STAGING_URL $WP_HOME --allow-root
 	wp search-replace http://$STAGING_URL $WP_HOME --allow-root
-	wp rewrite flush --allow-root
 fi
+wp rewrite flush --allow-root
 `
 
 const wpActivatePluginsScript = `#!/bin/bash
@@ -702,23 +701,23 @@ func (wp *Wordpress) installWPContainer() []corev1.Container {
 	}
 
 	return []corev1.Container{
-		{
-			Name:            "install-wp",
-			Image:           wp.Spec.Image,
-			VolumeMounts:    wp.volumeMounts(),
-			Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
-			EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
-			Resources:       wp.Spec.Resources,
-			SecurityContext: wp.securityContext(),
-			Command:         []string{"wp-install"},
-			Args: []string{
-				"$(WORDPRESS_BOOTSTRAP_TITLE)",
-				wp.HomeURL(),
-				"$(WORDPRESS_BOOTSTRAP_USER)",
-				"$(WORDPRESS_BOOTSTRAP_PASSWORD)",
-				"$(WORDPRESS_BOOTSTRAP_EMAIL)",
-			},
-		},
+		// {
+		// 	Name:            "install-wp",
+		// 	Image:           wp.Spec.Image,
+		// 	VolumeMounts:    wp.volumeMounts(),
+		// 	Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+		// 	EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
+		// 	Resources:       wp.Spec.Resources,
+		// 	SecurityContext: wp.securityContext(),
+		// 	Command:         []string{"wp-install"},
+		// 	Args: []string{
+		// 		"$(WORDPRESS_BOOTSTRAP_TITLE)",
+		// 		wp.HomeURL(),
+		// 		"$(WORDPRESS_BOOTSTRAP_USER)",
+		// 		"$(WORDPRESS_BOOTSTRAP_PASSWORD)",
+		// 		"$(WORDPRESS_BOOTSTRAP_EMAIL)",
+		// 	},
+		// },
 		{
 			Name:            "update-wp-config",
 			Image:           wp.Spec.Image,
