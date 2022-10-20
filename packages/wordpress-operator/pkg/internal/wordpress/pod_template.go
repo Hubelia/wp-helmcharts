@@ -141,11 +141,19 @@ fi
 
 const wpBootstrapScript = `#!/bin/bash
 export DECODED_URL=$(echo $WORDPRESS_BOOTSTRAP_OLD_URL | base64 --decode)
+export STAGING_URL=$(echo $WORDPRESS_BOOTSTRAP_STAGING_URL | base64 --decode)
 if [ ! -z "$DECODED_URL" ] ; then
 	echo $DECODED_URL
 	echo $WP_HOME
     wp search-replace https://$DECODED_URL $WP_HOME --allow-root
 	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+	wp rewrite flush --allow-root
+fi
+if [ ! -z "$STAGING_URL" ] ; then
+	echo $STAGING_URL
+	echo $WP_HOME
+    wp search-replace https://$STAGING_URL $WP_HOME --allow-root
+	wp search-replace http://$STAGING_URL $WP_HOME --allow-root
 	wp rewrite flush --allow-root
 fi
 `
@@ -250,6 +258,12 @@ while true; do
 			echo $GIT_CLONE_URL
 			git remote set-url origin $GIT_CLONE_URL
 			git push origin $GIT_CLONE_REF
+			if [ ! -z "$PROD_GIT_CLONE_BRANCH" ] ; then
+				git switch -c $PROD_GIT_CLONE_BRANCH
+				git pull origin $GIT_CLONE_REF
+				git commit -am "Publish to Production - $(date)"
+				git push origin $PROD_GIT_CLONE_BRANCH
+			fi
 		fi
 		rm -rf /run/presslabs.org/code/src/wp-content/plugins/wordpress-deploy/deployToProduction
 	fi
