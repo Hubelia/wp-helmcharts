@@ -9,7 +9,7 @@ questions:
     group: Wordpress Image Settings
     label: WordPress Image Repository
   - variable: global.image.tag
-    default: "6.0.2-php-8.1"
+    default: "6.0.3-php-8.1"
     description: "Wordpress Image Version"
     type: string
     group: Wordpress Image Settings

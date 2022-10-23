@@ -80,17 +80,13 @@ puts jwt
 " > $HOME/jwt.rb
     TOKEN=$(ruby $HOME/jwt.rb)
     GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
-    echo "installation id: $GITHUB_INSTALLATION_ID"
     GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
     echo "repo name: $GITHUB_REPO_NAME"
     APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
     export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
-    echo "clean url: $CLEAN_URL"
     GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
-    echo "new url: $GIT_CLONE_URL"
-    echo "GITHUB URL IS $GIT_CLONE_URL"
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
         echo "Setting up SSH key"
@@ -165,19 +161,18 @@ wp plugin activate wordpress-deploy || true
 const gitChangeWatcherScript = `#!/bin/sh
 echo "Checking for changes"
 while true; do
-	echo "$(date) Checking for changes..." >> /tmp/myapp.log
 	if [ -f $SRC_DIR/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
 		echo "Deployment in progress...ignoring for now." ;
 		sleep 30;
 		continue
 	fi
-	echo $(cd $SRC_DIR && git fetch && git status -uno)
 	utdchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "up to date")
 	aheadchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "branch is ahead")
 	changes=$utdchanges$aheadchanges;
 	cd /
 	echo "Changes: $changes"
 	if [ "$changes" = "" ] ; then
+		echo "$(date) Changes detected - pulling" >> /tmp/myapp.log
 		set -e
 		set -o pipefail
 
@@ -215,17 +210,13 @@ while true; do
 			TOKEN=$(ruby $HOME/jwt.rb)
 			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H\
 			"Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
-			echo "installation id: $GITHUB_INSTALLATION_ID"
 			GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
 			echo "repo name: $GITHUB_REPO_NAME"
 			APP_TOKEN=$(curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN" \
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
 			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
-			echo "clean url: $CLEAN_URL"
 			GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
-			echo "new url: $GIT_CLONE_URL"
-			echo "GITHUB URL IS $GIT_CLONE_URL"
 		fi
 		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
 				echo "Setting up SSH key"
@@ -266,8 +257,8 @@ done
 const gitPushScript = `#!/bin/sh
 echo "Checking for changes"
 while true; do
-	echo "$(date) Checking for changes..." >> /tmp/myapp.log ;
 	if [ -f $SRC_DIR/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
+		echo "$(date) Changes detected..." >> /tmp/myapp.log ;
 		echo "    $(date) Deploying to production" >> /tmp/myapp.log ;
 		set -e
 		set -o pipefail
@@ -314,10 +305,7 @@ while true; do
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
 			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"write"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
-			echo "clean url: $CLEAN_URL"
 			GIT_CLONE_URL_CLEAN=https://x-access-token:$APP_TOKEN@$CLEAN_URL
-			echo "new url: $GIT_CLONE_URL_CLEAN"
-			echo "GITHUB URL IS $GIT_CLONE_URL_CLEAN"
 		fi
 		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
 				echo "Setting up SSH key"
