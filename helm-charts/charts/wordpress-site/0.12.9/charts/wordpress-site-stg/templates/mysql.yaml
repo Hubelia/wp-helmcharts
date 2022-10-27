@@ -13,3 +13,11 @@ spec:
   secretName: {{ include "wordpress-site.fullname" . }}-stg-db
   mysqlConf:
     {{ toYaml .Values.global.mysql.mysqlConf | nindent 4 }}
+  {{- if .Values.global.mysql.storageSize }}
+  volumeSpec:
+    persistentVolumeClaim:
+      resources:
+        requests:
+          storage: {{ .Values.global.mysql.storageSize }}
+  {{- end }}
+

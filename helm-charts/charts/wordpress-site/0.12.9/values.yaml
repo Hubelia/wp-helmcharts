@@ -84,6 +84,8 @@ global:
   mysql:
     mysqlConf: {}
     replicaCount: 1
+    storageSize: 1Gi
+    storageClassName: ""
 
   memcached:
     replicaCount: 1

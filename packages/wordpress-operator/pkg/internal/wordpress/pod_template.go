@@ -160,54 +160,51 @@ wp plugin activate wordpress-deploy || true
 
 const gitChangeWatcherScript = `#!/bin/sh
 echo "Checking for changes"
+if [ ! -z "$GITHUB_APP_ID" ] && [ ! -f /tmp/jwt.rb ] ; then
+	if [[ "$GIT_CLONE_URL" == *"@"* ]]; then
+		arrIN=(${IN//@// })
+		GIT_CLONE_URL=$(${arrIN[1]})
+	fi
+	echo "$GITHUB_APP_PRIVATE_KEY" > /tmp/appcert.pem
+	echo "Setting up GitHub App script"
+	if [[ "$GIT_CLONE_URL" == *"@"* ]]; then
+		rrIN=(${IN//@// })
+		GIT_CLONE_URL=$(${arrIN[1]})
+	fi
+	echo "adding jwt script"
+	echo "require 'openssl'
+	require 'jwt'
+	# Private key contents
+	private_pem = File.read(\"/tmp/appcert.pem\")
+	private_key = OpenSSL::PKey::RSA.new(private_pem)
+
+	# Generate the JWT
+	payload = {
+	# issued at time, 60 seconds in the past to allow for clock drift
+	iat: Time.now.to_i - 60,
+	# JWT expiration time (10 minute maximum)
+	exp: Time.now.to_i + (10 * 60),
+	# GitHub App's identifier
+	iss: "$GITHUB_APP_ID"
+	}
+
+	jwt = JWT.encode(payload, private_key, 'RS256')
+	puts jwt
+" > /tmp/jwt.rb
+fi
+
 while true; do
 	if [ -f $SRC_DIR/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
 		echo "Deployment in progress...ignoring for now." ;
 		sleep 30;
 		continue
 	fi
-	utdchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "up to date")
-	aheadchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "branch is ahead")
-	changes=$utdchanges$aheadchanges;
-	cd /
-	echo "Changes: $changes"
-	if [ "$changes" = "" ] ; then
-		echo "$(date) Changes detected - pulling" >> /tmp/myapp.log
-		set -e
-		set -o pipefail
-
-		export HOME="$(mktemp -d)"
-		export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/knonw_hosts -o StrictHostKeyChecking=no"
-
-		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
-
+	autherror=$(cd $SRC_DIR && git fetch | grep "Authentication failed")
+	if [ ! -z "$autherror" ] ; then
 		if [ ! -z "$GITHUB_APP_ID" ] ; then
-			if [[ "$GIT_CLONE_URL" == *"@"* ]]; then
-			arrIN=(${IN//@// })
-			GIT_CLONE_URL=$(${arrIN[1]})
-			fi
-			echo "$GITHUB_APP_PRIVATE_KEY" > $HOME/appcert.pem
-			echo "require 'openssl'
-		require 'jwt'
-
-		# Private key contents
-		private_pem = File.read(\"$HOME/appcert.pem\")
-		private_key = OpenSSL::PKey::RSA.new(private_pem)
-
-		# Generate the JWT
-		payload = {
-		# issued at time, 60 seconds in the past to allow for clock drift
-		iat: Time.now.to_i - 60,
-		# JWT expiration time (10 minute maximum)
-		exp: Time.now.to_i + (10 * 60),
-		# GitHub App's identifier
-		iss: "$GITHUB_APP_ID"
-		}
-
-		jwt = JWT.encode(payload, private_key, 'RS256')
-		puts jwt
-		" > $HOME/jwt.rb
-			TOKEN=$(ruby $HOME/jwt.rb)
+			echo "Getting new Token"
+			echo "current gitclone url: $GIT_CLONE_URL"
+			TOKEN=$(ruby /tmp/jwt.rb)
 			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" -H\
 			"Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
 			GITHUB_REPO_NAME=$(echo $GIT_CLONE_URL | rev | cut -d/ -f1 | rev)
@@ -216,18 +213,36 @@ while true; do
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
 			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
-			GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+			export GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+			echo "New GIT_CLONE_URL: $GIT_CLONE_URL"
+			cd $SRC_DIR && git remote set-url origin $GIT_CLONE_URL
+			cd /
 		fi
 		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
-				echo "Setting up SSH key"
-				echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
-				chmod 0400 "$HOME/.ssh/id_rsa"
-				export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
+			echo "Setting up SSH key"
+			echo "$SSH_RSA_PRIVATE_KEY" > "$HOME/.ssh/id_rsa"
+			chmod 0400 "$HOME/.ssh/id_rsa"
+			export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
 		fi
+		echo "Token renewed"
+		sleep 30
+		continue
+	fi
+	utdchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "up to date")
+	aheadchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "branch is ahead")
+	changes=$utdchanges$aheadchanges;
+	echo "Changes: $changes"
+	if [ "$changes" = "" ] ; then
+		cd /
+		echo "$(date) Changes detected - pulling" >> /tmp/myapp.log
+		set -e
+		set -o pipefail
+		export HOME="$(mktemp -d)"
+		export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/knonw_hosts -o StrictHostKeyChecking=no"
+		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
 		set -x
 		cd $SRC_DIR
 		git config pull.rebase false || true
-		git remote set-url origin $GIT_CLONE_URL
 		git pull origin $GIT_CLONE_REF
 		if [ -f *.sql* ] ; then
 			export IMPORT_DB=true
