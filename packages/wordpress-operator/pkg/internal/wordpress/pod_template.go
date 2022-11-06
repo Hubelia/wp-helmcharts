@@ -86,6 +86,8 @@ puts jwt
     https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
     '{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
     export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+	ARR_URL=($(echo $CLEAN_URL | tr "@" "\n"))
+	CLEAN_URL=${ARR_URL[-1]}
     GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
 fi
 if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
@@ -200,7 +202,7 @@ while true; do
 		continue
 	fi
 	autherror=$(cd $SRC_DIR && git fetch | grep "Authentication failed")
-	if [ ! -z "$autherror" ] ; then
+	if [ ! -z "$autherror" ] || [[ "$GIT_CLONE_URL" != *"x-access-token"* ]] ; then
 		if [ ! -z "$GITHUB_APP_ID" ] ; then
 			echo "Getting new Token"
 			echo "current gitclone url: $GIT_CLONE_URL"
@@ -213,8 +215,9 @@ while true; do
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
 			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"read"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+			ARR_URL=($(echo $CLEAN_URL | tr "@" "\n"))
+			CLEAN_URL=${ARR_URL[-1]}
 			export GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
-			echo "New GIT_CLONE_URL: $GIT_CLONE_URL"
 			cd $SRC_DIR && git remote set-url origin $GIT_CLONE_URL
 			cd /
 		fi
@@ -224,9 +227,7 @@ while true; do
 			chmod 0400 "$HOME/.ssh/id_rsa"
 			export GIT_SSH_COMMAND="$GIT_SSH_COMMAND -o IdentityFile=$HOME/.ssh/id_rsa"
 		fi
-		echo "Token renewed"
-		sleep 30
-		continue
+		echo "Auth mechanism renewed"
 	fi
 	utdchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "up to date")
 	aheadchanges=$(cd $SRC_DIR && git fetch && git status -uno | grep "branch is ahead")
@@ -242,11 +243,12 @@ while true; do
 		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
 		set -x
 		cd $SRC_DIR
+		git remote set-url origin $GIT_CLONE_URL
 		git config pull.rebase false || true
 		git pull origin $GIT_CLONE_REF
 		if [ -f *.sql* ] ; then
 			export IMPORT_DB=true
-			rm -rf *.sql || true 
+			rm -rf *.sql || true
 			if [ -f *.enc ] ; then
 				if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 					echo "Decrypting database"
@@ -320,6 +322,8 @@ while true; do
 			https://api.github.com/app/installations/$GITHUB_INSTALLATION_ID/access_tokens -d \
 			'{"repository":"$GITHUB_REPO_NAME","permissions":{"contents":"write"}}' | jq -r '.token')
 			export CLEAN_URL=$(echo $GIT_CLONE_URL | sed -e 's/https:\/\///g' -e 's/git@//g' -e 's/:/\//g')
+			ARR_URL=($(echo $CLEAN_URL | tr "@" "\n"))
+			CLEAN_URL=${ARR_URL[-1]}
 			GIT_CLONE_URL_CLEAN=https://x-access-token:$APP_TOKEN@$CLEAN_URL
 		fi
 		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
@@ -355,6 +359,7 @@ while true; do
 			git rm -f --cached *.sql || true
 			rm -rf *.sql || true
 			git add *
+			git add .
 			git status
 			ls
 			git config --global user.email "deploy@hubelia.dev"
