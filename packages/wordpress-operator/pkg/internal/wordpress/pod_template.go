@@ -156,8 +156,35 @@ fi
 wp rewrite flush --allow-root
 `
 
+const wpImportChangerScript = `#!/bin/sh
+while true; do
+	echo "Checking for db imports"
+	if [ -f $WP_CONTENT_DIR/deployed ] ; then
+		echo "DB was imported - changing urls..."
+		export DECODED_URL=$(echo $WORDPRESS_BOOTSTRAP_OLD_URL | base64 --decode)
+		export STAGING_URL=$(echo $WORDPRESS_BOOTSTRAP_STAGING_URL | base64 --decode)
+		if [ ! -z "$DECODED_URL" ] ; then
+			echo $DECODED_URL
+			echo $WP_HOME
+			wp search-replace https://$DECODED_URL $WP_HOME --allow-root
+			wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+		fi
+		if [ ! -z "$STAGING_URL" ] ; then
+			echo $STAGING_URL
+			echo $WP_HOME
+			wp search-replace https://$STAGING_URL $WP_HOME --allow-root
+			wp search-replace http://$STAGING_URL $WP_HOME --allow-root
+		fi
+		wp rewrite flush --allow-root
+		rm -rf $WP_CONTENT_DIR/deployed
+	fi
+	sleep 60;
+done
+`
+
 const wpActivatePluginsScript = `#!/bin/bash
 wp plugin activate wordpress-deploy || true
+wp plugin activate wp-mail-smtp || true
 `
 
 const gitChangeWatcherScript = `#!/bin/sh
@@ -201,6 +228,9 @@ while true; do
 		sleep 30;
 		continue
 	fi
+	cd $SRC_DIR
+	git fetch
+	cd /
 	autherror=$(cd $SRC_DIR && git fetch | grep "Authentication failed")
 	if [ ! -z "$autherror" ] || [[ "$GIT_CLONE_URL" != *"x-access-token"* ]] ; then
 		if [ ! -z "$GITHUB_APP_ID" ] ; then
@@ -262,6 +292,8 @@ while true; do
 			if [ "$IMPORT_DB" = true ] ; then
 				echo "Importing database"
 				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
+				rm -rf $SRC_DIR/wp-content/deployed
+				touch $SRC_DIR/wp-content/deployed
 			fi
 			rm *.sql
 		fi
@@ -352,9 +384,9 @@ while true; do
 		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 			echo "Encrypting database"
 			git rm -f --cached *.sql.enc || true
+			git repack -a -d -f --depth=250 --window=250 || true
 			git config pull.rebase false || true
 			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql -out $DB_NAME.sql.enc -pass stdin
-			echo "wp-content/plugins/wordpress-deploy" >> .gitignore
 			grep -qxF "wp-content/plugins/wordpress-deploy" .gitignore || echo "wp-content/plugins/wordpress-deploy" >> .gitignore
 			git rm -f --cached *.sql || true
 			rm -rf *.sql || true
@@ -370,7 +402,7 @@ while true; do
 			git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git push
 			if [ ! -z "$PROD_GIT_CLONE_BRANCH" ] ; then
-				git fetch --all
+				git fetch
 				git checkout $PROD_GIT_CLONE_BRANCH
 				git pull origin $PROD_GIT_CLONE_BRANCH
 				git pull origin $GIT_CLONE_REF
@@ -720,6 +752,18 @@ func (wp *Wordpress) gitCloneContainer() corev1.Container {
 	}
 }
 
+func (wp *Wordpress) wpImportChanger() corev1.Container {
+	return corev1.Container{
+		Name:            "wp-afterimport",
+		Args:            []string{"/bin/bash", "-c", wpImportChangerScript},
+		Image:           wp.Spec.Image,
+		Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
+		EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
+		VolumeMounts:    wp.volumeMounts(),
+		SecurityContext: wp.securityContext(),
+	}
+}
+
 func (wp *Wordpress) gitPushContainer() corev1.Container {
 	return corev1.Container{
 		Name:    "git-push",
@@ -1006,6 +1050,8 @@ func (wp *Wordpress) WebPodTemplateSpec() (out corev1.PodTemplateSpec) {
 
 	if strings.HasSuffix(wp.Name, "-stg") {
 		out.Spec.Containers = append(out.Spec.Containers, wp.gitPushContainer())
+	} else {
+		out.Spec.Containers = append(out.Spec.Containers, wp.wpImportChanger())
 	}
 
 	out.Spec.Containers = append(out.Spec.Containers, wp.gitChangeWatcher())
