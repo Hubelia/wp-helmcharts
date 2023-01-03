@@ -3,7 +3,7 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-01-03T12:19:08.654164839-05:00"
+    created: "2023-01-03T12:25:34.677972403-05:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
@@ -15,7 +15,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-01-03T12:19:08.659497353-05:00"
+    created: "2023-01-03T12:25:34.690311011-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -35,7 +35,7 @@ entries:
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: b82a08cf1c23572d261b5ae198e580d14b4720af37c4970a593eb0b107a8ef69
+    digest: 269f73cede77949a1f73c0c3d2c04a6eb2a2542bd23761ecdd67c52bf4e8b217
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -58,14 +58,14 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-01-03T12:19:08.660779947-05:00"
+    created: "2023-01-03T12:25:34.69264946-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
       repository: http://localhost:10191
       version: 0.12.9
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: 8cb2be9959967da2a44bf42ed063713a058ee54ce7ba86bf36ce8f5eea903df1
+    digest: 4d7f52f22f4c4e1d93f3e85f8832d8be9e737fc63d7647b26ea82a8ee9a5c1f2
     keywords:
     - wordpress
     - CMS
@@ -85,4 +85,4 @@ entries:
     urls:
     - https://github.com/Hubelia/wp-helmcharts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-01-03T12:19:08.653624277-05:00"
+generated: "2023-01-03T12:25:34.676999032-05:00"
