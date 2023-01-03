@@ -44,8 +44,8 @@ import (
 
 const (
 	controllerName      = "wp-cron-controller"
-	cronTriggerInterval = 30 * time.Second
-	cronTriggerTimeout  = 30 * time.Second
+	cronTriggerInterval = 60 * time.Second
+	cronTriggerTimeout  = 60 * time.Second
 )
 
 var errHTTP = errors.New("HTTP error")
@@ -134,13 +134,18 @@ func (r *ReconcileWordpress) Reconcile(ctx context.Context, request reconcile.Re
 	defer cancel()
 
 	err = r.pingURL(ctxWithTimeout, _u.String(), wp.MainDomain())
+
 	if err != nil {
 		log.Error(err, "error while triggering wp-cron")
+
+		return requeue, nil
 	}
 
 	err = r.updateWPCronStatus(ctx, wp, err)
 	if err != nil {
 		log.Error(err, "error updating wordpress wp-cron status")
+
+		return requeue, nil
 	}
 
 	return requeue, nil

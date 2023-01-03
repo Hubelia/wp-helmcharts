@@ -118,12 +118,12 @@ if [ "$WP_ENV" = "staging" ] ; then
 	cd "$SRC_DIR"
 fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
-if [ -f *.sql* ] ; then
+if [ -f *.sql.gz* ] ; then
     export IMPORT_DB=true
     if [ -f *.enc ] ; then
         if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
             echo "Decrypting database"
-            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out db.sql -pass stdin
+            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out db.sql.gz -pass stdin
             ls
         else
             export IMPORT_DB=false
@@ -131,6 +131,7 @@ if [ -f *.sql* ] ; then
         fi
     fi
     if [ "$IMPORT_DB" = true ] ; then
+        gzip -d db.sql.gz || true
         echo "Importing database"
         mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
 		rm -rf ./db.sql || true
@@ -282,7 +283,8 @@ while true; do
 			if [ -f *.enc ] ; then
 				if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 					echo "Decrypting database"
-					echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.enc) -out ./db.sql -pass stdin
+					echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out ./db.sql.gz -pass stdin
+					gzip -d ./db.sql.gz
 					ls
 				else
 					IMPORT_DB=false
@@ -379,23 +381,24 @@ while true; do
 		echo "Exporting database"
 		rm -rf *.sql.enc || true
 		rm -rf *.sql || true
-		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 > $DB_NAME.sql
-		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force< ./$DB_NAME.sql
+		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > ./$DB_NAME.sql.gz
+		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < gzip -8 ./$DB_NAME.sql.gz
 		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 			echo "Encrypting database"
-			git rm -f --cached *.sql.enc || true
-			git repack -a -d -f --depth=250 --window=250 || true
+			git rm -f --cached *.sql.gz.enc || true
 			git config pull.rebase false || true
-			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql -out $DB_NAME.sql.enc -pass stdin
+			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql.gz -out $DB_NAME.sql.gz.enc -pass stdin
 			grep -qxF "wp-content/plugins/wordpress-deploy" .gitignore || echo "wp-content/plugins/wordpress-deploy" >> .gitignore
 			git rm -f --cached *.sql || true
+			git rm -f --cached *.sql.gz || true
 			rm -rf *.sql || true
+			rm -rf *.sql.gz || true
 			git add *
 			git add .
 			git status
 			ls
-			git config --global user.email "deploy@hubelia.dev"
-			git config --global user.name "Hubelia - Wordpress Deploy"
+			git config user.email "deploy@hubelia.dev"
+			git config user.name "Hubelia - Wordpress Deploy"
 			git pull origin $GIT_CLONE_REF
 			git commit -am "Publish to Production - $(date)"
 			echo $GIT_CLONE_URL_CLEAN
@@ -754,13 +757,13 @@ func (wp *Wordpress) gitCloneContainer() corev1.Container {
 
 func (wp *Wordpress) wpImportChanger() corev1.Container {
 	return corev1.Container{
-		Name:            "wp-afterimport",
-		Args:            []string{"/bin/bash", "-c", wpImportChangerScript},
+		Name:            "after-import",
 		Image:           wp.Spec.Image,
+		VolumeMounts:    wp.volumeMounts(),
 		Env:             append(wp.env(), wp.Spec.WordpressBootstrapSpec.Env...),
 		EnvFrom:         append(wp.envFrom(), wp.Spec.WordpressBootstrapSpec.EnvFrom...),
-		VolumeMounts:    wp.volumeMounts(),
 		SecurityContext: wp.securityContext(),
+		Command:         []string{"/bin/bash", "-c", wpImportChangerScript},
 	}
 }
 
@@ -873,10 +876,6 @@ func (wp *Wordpress) prepareVolumesContainer() corev1.Container {
 }
 
 func (wp *Wordpress) installWPContainer() []corev1.Container {
-	if wp.Spec.WordpressBootstrapSpec == nil {
-		return []corev1.Container{}
-	}
-
 	return []corev1.Container{
 		// {
 		// 	Name:            "install-wp",
@@ -1048,13 +1047,13 @@ func (wp *Wordpress) WebPodTemplateSpec() (out corev1.PodTemplateSpec) {
 	}
 	out.Spec.Containers = append([]corev1.Container{wordpressContainer}, wp.Spec.Sidecars...)
 
-	if strings.HasSuffix(wp.Name, "-stg") {
+	out.Spec.Containers = append(out.Spec.Containers, wp.gitChangeWatcher())
+
+	if strings.HasSuffix(wp.ObjectMeta.Name, "-stg") {
 		out.Spec.Containers = append(out.Spec.Containers, wp.gitPushContainer())
 	} else {
 		out.Spec.Containers = append(out.Spec.Containers, wp.wpImportChanger())
 	}
-
-	out.Spec.Containers = append(out.Spec.Containers, wp.gitChangeWatcher())
 
 	out.Spec.Volumes = wp.volumes()
 

@@ -3,19 +3,19 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2022-11-06T09:03:34.823600622-05:00"
+    created: "2023-01-03T12:19:08.654164839-05:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
     name: atmoz-sftp
     type: application
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/atmoz-sftp-0.12.9.tgz
+    - https://github.com/Hubelia/wp-helmcharts/atmoz-sftp-0.12.9.tgz
     version: 0.12.9
   stack:
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2022-11-06T09:03:34.828786925-05:00"
+    created: "2023-01-03T12:19:08.659497353-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -51,21 +51,21 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.9.tgz
+    - https://github.com/Hubelia/wp-helmcharts/stack-0.12.9.tgz
     version: 0.12.9
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2022-11-06T09:03:34.830271973-05:00"
+    created: "2023-01-03T12:19:08.660779947-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
       repository: http://localhost:10191
       version: 0.12.9
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: 82d6ef2b0d52cf0e19101389fe558d61fa7fa2859aaeea44a857e4c131e71f4d
+    digest: 8cb2be9959967da2a44bf42ed063713a058ee54ce7ba86bf36ce8f5eea903df1
     keywords:
     - wordpress
     - CMS
@@ -83,6 +83,6 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
+    - https://github.com/Hubelia/wp-helmcharts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2022-11-06T09:03:34.823282562-05:00"
+generated: "2023-01-03T12:19:08.653624277-05:00"
