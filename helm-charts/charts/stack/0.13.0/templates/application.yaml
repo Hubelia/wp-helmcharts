@@ -1,0 +1,85 @@
+{{- if (.Capabilities.APIVersions.Has "app.k8s.io/v1beta1") }}
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: {{ include "stack.fullname" . }}
+  annotations:
+    kubernetes-engine.cloud.google.com/icon: data:image/png;base64,{{ .Files.Get "icon.png" | b64enc }}
+  labels:
+    {{- include "stack.labels" . | nindent 4 }}
+spec:
+  componentKinds:
+  - group: v1
+    kind: Secret
+  - group: v1
+    kind: ConfigMap
+  - group: v1
+    kind: PersistentVolumeClaim
+# temporarily remove Service from component kinds list
+# due to: https://github.com/kubernetes-sigs/application/issues/209
+# - group: v1
+#   kind: Service
+  - group: apps
+    kind: Deployment
+  - group: apps
+    kind: StatefulSet
+  - group: batch
+    kind: Job
+  - group: batch
+    kind: CronJob
+  # cert manager operator
+  - group: cert-manager.io
+    kind: Certificate
+  - group: cert-manager.io
+    kind: Issuer
+  - group: cert-manager.io
+    kind: ClusterIssuer
+  # prometheus operator
+  - group: monitoring.coreos.com
+    kind: Prometheus
+  - group: monitoring.coreos.com
+    kind: ServiceMonitor
+  - group: monitoring.coreos.com
+    kind: PrometheusRule
+  - group: monitoring.coreos.com
+    kind: Alertmanager
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name }}
+
+  descriptor:
+    type: Hubelia Stack
+    version: {{ .Chart.AppVersion }}
+    description: {{ .Chart.Description }}
+    maintainers:
+    - name: Hubelia
+      url: https://www.bitpoke.io/stack
+      email: hello@bitpoke.io
+    links:
+    - description: Hubelia Stack
+      url: https://www.bitpoke.io/stack
+    - description: Hubelia Stack Github Repository
+      url: https://github.com/hubelia/wp-helmcharts/helm-charts/charts/stack
+    notes: {{ include "stack.docs" . | quote }}
+  info:
+  - name: Ingress IP
+    type: Reference
+    valueFrom:
+      serviceRef:
+        name: {{ .Release.Name }}-nginx-ingress-controller
+  {{- if .Values.letsencrypt.enabled }}
+  - name: Ingress Let's Encrypt configured email
+    value: {{ .Values.letsencrypt.email }}
+  - name: Ingress Let's Encrypt configured URL
+    value: {{ .Values.letsencrypt.server }}
+  {{- else }}
+  - name: Ingress Certificate Authority
+    type: Reference
+    valueFrom:
+      type: SecretKeyRef
+      secretKeyRef:
+        name: {{ template "stack.fullname" . }}-ingress-default
+        key: ca.crt
+  {{- end }}
+{{- end }}

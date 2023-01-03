@@ -1,0 +1,36 @@
+apiVersion: v2
+appVersion: v0.13.0
+dependencies:
+- condition: mysql-operator.enabled
+  name: mysql-operator
+  repository: https://hubelia.github.io/wp-helmcharts
+  version: 0.6.2
+- condition: wordpress-operator.enabled
+  name: wordpress-operator
+  repository: https://hubelia.github.io/wp-helmcharts
+  version: 0.13.0
+- alias: nginx-ingress
+  condition: nginx-ingress.enabled
+  name: ingress-nginx
+  repository: https://kubernetes.github.io/ingress-nginx
+  version: 4.2.5
+- condition: git-webhook.enabled
+  name: git-webhook
+  repository: file://../git-webhook
+  version: 0.0.1+master
+description: Your Open-Source, Cloud-Native WordPress Infrastructure
+home: https://www.bitpoke.io/stack/
+icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
+keywords:
+- wordpress
+- hubelia-wp
+- Integration and Delivery
+kubeVersion: '>= 1.19.0-0'
+maintainers:
+- email: hello@hubelia.io
+  name: hubelia-wp
+  url: https://www.hubelia.io
+name: stack
+sources:
+- https://github.com/hubelia-wp/stack
+version: 0.13.0
