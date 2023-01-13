@@ -3,7 +3,7 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-01-03T12:42:11.958200557-05:00"
+    created: "2023-01-13T11:41:33.728045663-05:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
@@ -15,7 +15,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.13.0
-    created: "2023-01-03T12:42:11.968148628-05:00"
+    created: "2023-01-13T11:41:33.750226971-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -55,7 +55,7 @@ entries:
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-01-03T12:42:11.963464745-05:00"
+    created: "2023-01-13T11:41:33.739617279-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -98,14 +98,14 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.0
-    created: "2023-01-03T12:42:11.969346861-05:00"
+    created: "2023-01-13T11:41:33.752747445-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
       repository: http://localhost:10191
       version: 0.13.0
     description: Helm chart for deploying a WordPress sites on Kubernetes.
-    digest: a3b3c5db0f40b525dad85cd45bace7bc80fdf4756b176f782a7b3585ff21c5fd
+    digest: 99fcffe4e7c59e9d897fa4d56428f23fe606cd356c12526bbb021eea7404aca9
     keywords:
     - wordpress
     - CMS
@@ -129,7 +129,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-01-03T12:42:11.968778036-05:00"
+    created: "2023-01-13T11:41:33.751391304-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -156,4 +156,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-01-03T12:42:11.957650874-05:00"
+generated: "2023-01-13T11:41:33.727370374-05:00"

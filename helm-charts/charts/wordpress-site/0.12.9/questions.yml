@@ -3,7 +3,7 @@ categories:
   - CMS
 questions:
   - variable: global.image.repository
-    default: "hubelia/wordpress-runtime"
+    default: "ghcr.io/hubelia/wordpress-runtime"
     description: "Image Repository"
     type: string
     group: Wordpress Image Settings

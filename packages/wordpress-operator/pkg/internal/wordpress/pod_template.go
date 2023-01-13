@@ -389,6 +389,7 @@ while true; do
 			git config pull.rebase false || true
 			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql.gz -out $DB_NAME.sql.gz.enc -pass stdin
 			grep -qxF "wp-content/plugins/wordpress-deploy" .gitignore || echo "wp-content/plugins/wordpress-deploy" >> .gitignore
+			grep -qxF "!wp-content/uploads" .gitignore || echo "!wp-content/uploads" >> .gitignore
 			git rm -f --cached *.sql || true
 			git rm -f --cached *.sql.gz || true
 			rm -rf *.sql || true
