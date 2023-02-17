@@ -118,24 +118,34 @@ if [ "$WP_ENV" = "staging" ] ; then
 	cd "$SRC_DIR"
 fi
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
-if [ -f *.sql.gz* ] ; then
-    export IMPORT_DB=true
-    if [ -f *.enc ] ; then
-        if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
-            echo "Decrypting database"
-            echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out db.sql.gz -pass stdin
-            ls
-        else
-            export IMPORT_DB=false
-            echo "No \$DB_ENCRYPTION_KEY specified" >&2
+if [ -f *.sql* ] ; then
+    mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
+    db_file=$(echo *.sql.gz.enc)
+    last_import=$(mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -N -e "SELECT date FROM system_import ORDER BY date DESC LIMIT 1")
+    db_date=$(date -r "$db_file" +"%Y-%m-%d %H:%M:%S")
+    if [[ -n "$last_import" && "$db_date" > "$last_import" ]] || [[ -z "$last_import" ]]; then
+        export IMPORT_DB=true
+        rm -rf *.sql || true
+        if [ -f *.enc ] ; then
+            if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+                echo "Decrypting database"
+                echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out ./db.sql.gz -pass stdin
+                gzip -d ./db.sql.gz
+                ls
+            else
+                IMPORT_DB=false
+                echo "No \$DB_ENCRYPTION_KEY specified" >&2
+            fi
         fi
     fi
     if [ "$IMPORT_DB" = true ] ; then
-        gzip -d db.sql.gz || true
         echo "Importing database"
         mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
-		rm -rf ./db.sql || true
+        rm -rf $SRC_DIR/wp-content/deployed
+        touch $SRC_DIR/wp-content/deployed
+        mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
     fi
+    rm *.sql
 fi
 `
 
@@ -276,26 +286,34 @@ while true; do
 		cd $SRC_DIR
 		git remote set-url origin $GIT_CLONE_URL
 		git config pull.rebase false || true
-		git pull origin $GIT_CLONE_REF
+		git commit -am "Auto-commit" || true
+		git pull --strategy-option=theirs origin $GIT_CLONE_REF
 		if [ -f *.sql* ] ; then
-			export IMPORT_DB=true
-			rm -rf *.sql || true
-			if [ -f *.enc ] ; then
-				if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
-					echo "Decrypting database"
-					echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out ./db.sql.gz -pass stdin
-					gzip -d ./db.sql.gz
-					ls
-				else
-					IMPORT_DB=false
-					echo "No \$DB_ENCRYPTION_KEY specified" >&2
-				fi
-			fi
+            mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
+            db_file=$(echo *.sql.gz.enc)
+            last_import=$(mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -N -e "SELECT date FROM system_import ORDER BY date DESC LIMIT 1")
+		    db_date=$(date -r "$db_file" +"%Y-%m-%d %H:%M:%S")
+            if [[ -n "$last_import" && "$db_date" > "$last_import" ]] || [[ -z "$last_import" ]]; then
+                export IMPORT_DB=true
+                rm -rf *.sql || true
+                if [ -f *.enc ] ; then
+                    if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
+                        echo "Decrypting database"
+                        echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -d -in $(echo *.sql.gz.enc) -out ./db.sql.gz -pass stdin
+                        gzip -d ./db.sql.gz
+                        ls
+                    else
+                        IMPORT_DB=false
+                        echo "No \$DB_ENCRYPTION_KEY specified" >&2
+                    fi
+                fi
+            fi
 			if [ "$IMPORT_DB" = true ] ; then
 				echo "Importing database"
 				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
 				rm -rf $SRC_DIR/wp-content/deployed
 				touch $SRC_DIR/wp-content/deployed
+				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
 			fi
 			rm *.sql
 		fi
@@ -381,8 +399,7 @@ while true; do
 		echo "Exporting database"
 		rm -rf *.sql.enc || true
 		rm -rf *.sql || true
-		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > ./$DB_NAME.sql.gz
-		# mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < gzip -8 ./$DB_NAME.sql.gz
+		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 --ignore-table=system_import --ignore-table=wp_gf_entry --ignore-table=wp_gf_entry_meta --ignore-table=wp_gf_entry_notes --ignore-table=wp_db7_forms --ignore-table=wp_commentmeta --ignore-table=wp_comments | gzip -8 > ./$DB_NAME.sql.gz
 		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 			echo "Encrypting database"
 			git rm -f --cached *.sql.gz.enc || true
@@ -400,16 +417,16 @@ while true; do
 			ls
 			git config user.email "deploy@hubelia.dev"
 			git config user.name "Hubelia - Wordpress Deploy"
-			git pull origin $GIT_CLONE_REF
 			git commit -am "Publish to Production - $(date)"
+			git pull --strategy-option=theirs origin $GIT_CLONE_REF
 			echo $GIT_CLONE_URL_CLEAN
 			git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git push
 			if [ ! -z "$PROD_GIT_CLONE_BRANCH" ] ; then
 				git fetch
 				git checkout $PROD_GIT_CLONE_BRANCH
-				git pull origin $PROD_GIT_CLONE_BRANCH
-				git pull origin $GIT_CLONE_REF
+				git pull --strategy-option=ours origin $PROD_GIT_CLONE_BRANCH
+				git pull --strategy-option=theirs origin $GIT_CLONE_REF
 				git commit -am "Publish to Production - $(date)" || true
 				git push || true
 			fi

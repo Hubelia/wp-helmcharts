@@ -41,11 +41,11 @@ spec:
         description: {{ .Chart.Description }}
         maintainers:
           - name: Hubelia
-            url: https://www.bitpoke.io
-            email: hello@bitpoke.io
+            url: https://www.hubelia.com
+            email: info@hubelia.com
         links:
           - description: Hubelia Stack
-            url: https://www.bitpoke.io/stack
+            url: https://www.hubelia.com
           - description: Hubelia Wordpress Operator
             url: https://github.com/hubelia/wordpress-operator
       info:
