@@ -3,19 +3,19 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-03-15T09:07:38.44533724-04:00"
+    created: "2023-03-15T09:16:36.135980144-04:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
     name: atmoz-sftp
     type: application
     urls:
-    - https://hubelia.github.io/wp-helmcharts/atmoz-sftp-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/atmoz-sftp-0.12.9.tgz
     version: 0.12.9
   stack:
   - apiVersion: v2
     appVersion: v0.13.1
-    created: "2023-03-15T09:07:38.459471167-04:00"
+    created: "2023-03-15T09:16:36.151359627-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -51,11 +51,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/stack-0.13.1.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.1.tgz
     version: 0.13.1
   - apiVersion: v2
     appVersion: v0.13.0
-    created: "2023-03-15T09:07:38.454471904-04:00"
+    created: "2023-03-15T09:16:36.145420283-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -91,11 +91,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/stack-0.13.0.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.0.tgz
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-03-15T09:07:38.450136148-04:00"
+    created: "2023-03-15T09:16:36.141105013-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -131,14 +131,14 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/stack-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.9.tgz
     version: 0.12.9
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.1
-    created: "2023-03-15T09:07:38.462497361-04:00"
+    created: "2023-03-15T09:16:36.153305008-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -163,13 +163,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.13.1.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.1.tgz
     version: 0.13.1
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.0
-    created: "2023-03-15T09:07:38.461674361-04:00"
+    created: "2023-03-15T09:16:36.152773192-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -194,13 +194,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.13.0.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.0.tgz
     version: 0.13.0
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-03-15T09:07:38.460411277-04:00"
+    created: "2023-03-15T09:16:36.152212481-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -225,6 +225,6 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-03-15T09:07:38.444858851-04:00"
+generated: "2023-03-15T09:16:36.135666593-04:00"
