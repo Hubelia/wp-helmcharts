@@ -105,6 +105,7 @@ fi
 find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
 
 set -x
+git config --global --add safe.directory '*'
 git clone "$GIT_CLONE_URL" "$SRC_DIR"
 cd "$SRC_DIR"
 if [ "$WP_ENV" = "staging" ] ; then
@@ -117,12 +118,16 @@ if [ "$WP_ENV" = "staging" ] ; then
 	fi
 	cd "$SRC_DIR"
 fi
+git config --global --add safe.directory '*'
 git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 if [ -f *.sql* ] ; then
     mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
     db_file=$(echo *.sql.gz.enc)
     last_import=$(mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -N -e "SELECT date FROM system_import ORDER BY date DESC LIMIT 1")
-    db_date=$(date -r "$db_file" +"%Y-%m-%d %H:%M:%S")
+    git_log=$(git log --pretty=format:"%ad" --date=iso --max-count=1 $remote_branch -- $db_file)
+    db_date=$(date -d "$git_log" +%Y-%m-%d\ %H:%M:%S)
+    echo "Last import: $last_import"
+    echo "DB date: $db_date"
     if [[ -n "$last_import" && "$db_date" > "$last_import" ]] || [[ -z "$last_import" ]]; then
         export IMPORT_DB=true
         rm -rf *.sql || true
@@ -143,9 +148,10 @@ if [ -f *.sql* ] ; then
         mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME --force < ./db.sql
         rm -rf $SRC_DIR/wp-content/deployed
         touch $SRC_DIR/wp-content/deployed
+        mkdir -p $SRC_DIR/wp-content/languages
         mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
     fi
-    rm *.sql
+    rm *.sql || true
 fi
 `
 
@@ -234,12 +240,14 @@ if [ ! -z "$GITHUB_APP_ID" ] && [ ! -f /tmp/jwt.rb ] ; then
 fi
 
 while true; do
+    echo "Checking for changes"
 	if [ -f $SRC_DIR/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
 		echo "Deployment in progress...ignoring for now." ;
 		sleep 30;
 		continue
 	fi
 	cd $SRC_DIR
+	git config --global --add safe.directory '*'
 	git fetch
 	cd /
 	autherror=$(cd $SRC_DIR && git fetch | grep "Authentication failed")
@@ -259,6 +267,7 @@ while true; do
 			ARR_URL=($(echo $CLEAN_URL | tr "@" "\n"))
 			CLEAN_URL=${ARR_URL[-1]}
 			export GIT_CLONE_URL=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+			git config --global --add safe.directory '*'
 			cd $SRC_DIR && git remote set-url origin $GIT_CLONE_URL
 			cd /
 		fi
@@ -284,7 +293,10 @@ while true; do
 		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
 		set -x
 		cd $SRC_DIR
+		git config --global --add safe.directory '*'
 		git remote set-url origin $GIT_CLONE_URL
+        git config user.email "deploy@hubelia.dev"
+        git config user.name "Hubelia - Wordpress Deploy"
 		git config pull.rebase false || true
 		git commit -am "Auto-commit" || true
 		git pull --strategy-option=theirs origin $GIT_CLONE_REF
@@ -292,7 +304,10 @@ while true; do
             mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
             db_file=$(echo *.sql.gz.enc)
             last_import=$(mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -N -e "SELECT date FROM system_import ORDER BY date DESC LIMIT 1")
-		    db_date=$(date -r "$db_file" +"%Y-%m-%d %H:%M:%S")
+            git_log=$(git log --pretty=format:"%ad" --date=iso --max-count=1 $GIT_CLONE_REF -- $db_file)
+            db_date=$(date -d "$git_log" +%Y-%m-%d\ %H:%M:%S)
+            echo "Last import: $last_import"
+            echo "DB date: $db_date"
             if [[ -n "$last_import" && "$db_date" > "$last_import" ]] || [[ -z "$last_import" ]]; then
                 export IMPORT_DB=true
                 rm -rf *.sql || true
@@ -315,7 +330,7 @@ while true; do
 				touch $SRC_DIR/wp-content/deployed
 				mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
 			fi
-			rm *.sql
+			rm *.sql || true
 		fi
 		cd /
 	fi
@@ -324,20 +339,19 @@ done
 `
 
 const gitPushScript = `#!/bin/sh
-echo "Checking for changes"
 while true; do
+    echo "Checking for changes"
 	if [ -f $SRC_DIR/wp-content/plugins/wordpress-deploy/deployToProduction ] ; then
 		echo "$(date) Changes detected..." >> /tmp/myapp.log ;
+		echo "$(date) Changes detected..."
 		echo "    $(date) Deploying to production" >> /tmp/myapp.log ;
+		echo "    $(date) Deploying to production"
 		set -e
 		set -o pipefail
-
 		export HOME="$(mktemp -d)"
 		export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$HOME/.ssh/knonw_hosts -o StrictHostKeyChecking=no"
-
 		test -d "$HOME/.ssh" || mkdir "$HOME/.ssh"
 		GIT_CLONE_URL_CLEAN=""
-
 		if [ ! -z "$GITHUB_APP_ID" ] ; then
 			if [[ "$GIT_CLONE_URL" == *"@"* ]]; then
 			arrIN=(${IN//@// })
@@ -363,8 +377,8 @@ while true; do
 
 		jwt = JWT.encode(payload, private_key, 'RS256')
 		puts jwt
-		" > $HOME/jwt.rb
-			TOKEN=$(ruby $HOME/jwt.rb)
+		" > /tmp/jwt.rb
+			TOKEN=$(ruby /tmp/jwt.rb)
 			GITHUB_INSTALLATION_ID=$(curl -s "Accept: application/vnd.github+json" \
 			-H "Authorization: Bearer $TOKEN" https://api.github.com/app/installations | jq -r '.[].id')
 			echo "installation id: $GITHUB_INSTALLATION_ID"
@@ -377,6 +391,7 @@ while true; do
 			ARR_URL=($(echo $CLEAN_URL | tr "@" "\n"))
 			CLEAN_URL=${ARR_URL[-1]}
 			GIT_CLONE_URL_CLEAN=https://x-access-token:$APP_TOKEN@$CLEAN_URL
+			echo "clean url: $GIT_CLONE_URL_CLEAN"
 		fi
 		if [ ! -z "$SSH_RSA_PRIVATE_KEY" ] ; then
 				echo "Setting up SSH key"
@@ -392,14 +407,18 @@ while true; do
 
 		set -x
 		# git clone "$GIT_CLONE_URL" "$SRC_DIR"
+		git config --global --add safe.directory '*'
 		cd "$SRC_DIR"
 		ls -la
 		pwd
 		# git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 		echo "Exporting database"
-		rm -rf *.sql.enc || true
-		rm -rf *.sql || true
-		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 --ignore-table=system_import --ignore-table=wp_gf_entry --ignore-table=wp_gf_entry_meta --ignore-table=wp_gf_entry_notes --ignore-table=wp_db7_forms --ignore-table=wp_commentmeta --ignore-table=wp_comments | gzip -8 > ./$DB_NAME.sql.gz
+        git rm -f --cached *.sql || true
+        git rm -f --cached *.sql.gz || true
+		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 \
+		--ignore-table=$DB_NAME.system_import --ignore-table=$DB_NAME.wp_gf_entry \
+		--ignore-table=$DB_NAME.wp_gf_entry_meta --ignore-table=$DB_NAME.wp_gf_entry_notes --ignore-table=$DB_NAME.wp_db7_forms \
+		--ignore-table=$DB_NAME.wp_commentmeta --ignore-table=$DB_NAME.wp_comments | gzip -8 > ./$DB_NAME.sql.gz
 		if [ ! -z "$DB_ENCRYPTION_KEY" ] ; then
 			echo "Encrypting database"
 			git rm -f --cached *.sql.gz.enc || true
@@ -407,8 +426,6 @@ while true; do
 			echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in $DB_NAME.sql.gz -out $DB_NAME.sql.gz.enc -pass stdin
 			grep -qxF "wp-content/plugins/wordpress-deploy" .gitignore || echo "wp-content/plugins/wordpress-deploy" >> .gitignore
 			grep -qxF "!wp-content/uploads" .gitignore || echo "!wp-content/uploads" >> .gitignore
-			git rm -f --cached *.sql || true
-			git rm -f --cached *.sql.gz || true
 			rm -rf *.sql || true
 			rm -rf *.sql.gz || true
 			git add *
@@ -419,9 +436,12 @@ while true; do
 			git config user.name "Hubelia - Wordpress Deploy"
 			git commit -am "Publish to Production - $(date)"
 			git pull --strategy-option=theirs origin $GIT_CLONE_REF
+            git reflog expire --expire=now --all
+            git gc --aggressive --prune=now
 			echo $GIT_CLONE_URL_CLEAN
 			git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git push
+			mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
 			if [ ! -z "$PROD_GIT_CLONE_BRANCH" ] ; then
 				git fetch
 				git checkout $PROD_GIT_CLONE_BRANCH

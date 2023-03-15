@@ -3,19 +3,59 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-01-13T11:41:33.728045663-05:00"
+    created: "2023-03-15T09:07:38.44533724-04:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
     name: atmoz-sftp
     type: application
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/atmoz-sftp-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/atmoz-sftp-0.12.9.tgz
     version: 0.12.9
   stack:
   - apiVersion: v2
+    appVersion: v0.13.1
+    created: "2023-03-15T09:07:38.459471167-04:00"
+    dependencies:
+    - condition: mysql-operator.enabled
+      name: mysql-operator
+      repository: https://hubelia.github.io/wp-helmcharts
+      version: 0.6.2
+    - condition: wordpress-operator.enabled
+      name: wordpress-operator
+      repository: https://hubelia.github.io/wp-helmcharts
+      version: 0.13.1
+    - alias: nginx-ingress
+      condition: nginx-ingress.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.2.5
+    - condition: git-webhook.enabled
+      name: git-webhook
+      repository: file://../git-webhook
+      version: 0.0.1+master
+    description: Your Open-Source, Cloud-Native WordPress Infrastructure
+    digest: 8ba124aa238b93fd4a56c5eaef7802b71b076e6d150501617c8feace9aff3299
+    home: https://www.bitpoke.io/stack/
+    icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
+    keywords:
+    - wordpress
+    - hubelia-wp
+    - Integration and Delivery
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: hello@hubelia.io
+      name: hubelia-wp
+      url: https://www.hubelia.io
+    name: stack
+    sources:
+    - https://github.com/hubelia-wp/stack
+    urls:
+    - https://hubelia.github.io/wp-helmcharts/stack-0.13.1.tgz
+    version: 0.13.1
+  - apiVersion: v2
     appVersion: v0.13.0
-    created: "2023-01-13T11:41:33.750226971-05:00"
+    created: "2023-03-15T09:07:38.454471904-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -51,11 +91,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.0.tgz
+    - https://hubelia.github.io/wp-helmcharts/stack-0.13.0.tgz
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-01-13T11:41:33.739617279-05:00"
+    created: "2023-03-15T09:07:38.450136148-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -91,14 +131,45 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/stack-0.12.9.tgz
     version: 0.12.9
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
+    appVersion: 0.13.1
+    created: "2023-03-15T09:07:38.462497361-04:00"
+    dependencies:
+    - condition: global.staging.create_staging_env
+      name: wordpress-site-stg
+      repository: http://localhost:10191
+      version: 0.13.1
+    description: Helm chart for deploying a WordPress sites on Kubernetes.
+    digest: 2a13a57e161134262c949d7b51f663c06c07c58b20e5227ce6fbaeaea0909bca
+    keywords:
+    - wordpress
+    - CMS
+    - Web Application
+    - application
+    - web
+    - http
+    - php
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: hello@hubelia.com
+      name: Hubelia
+      url: https://www.hubelia.com
+    name: wordpress-site
+    sources:
+    - https://github.com/Hubelia/wp-helmcharts
+    urls:
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.13.1.tgz
+    version: 0.13.1
+  - annotations:
+      github.io/license: Apache-2.0
+    apiVersion: v2
     appVersion: 0.13.0
-    created: "2023-01-13T11:41:33.752747445-05:00"
+    created: "2023-03-15T09:07:38.461674361-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -123,13 +194,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.0.tgz
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.13.0.tgz
     version: 0.13.0
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-01-13T11:41:33.751391304-05:00"
+    created: "2023-03-15T09:07:38.460411277-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -154,6 +225,6 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
+    - https://hubelia.github.io/wp-helmcharts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-01-13T11:41:33.727370374-05:00"
+generated: "2023-03-15T09:07:38.444858851-04:00"
