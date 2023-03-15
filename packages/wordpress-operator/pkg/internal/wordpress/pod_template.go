@@ -298,7 +298,9 @@ while true; do
         git config user.email "deploy@hubelia.dev"
         git config user.name "Hubelia - Wordpress Deploy"
 		git config pull.rebase false || true
-		git commit -am "Auto-commit" || true
+		if [ "$WP_ENV" = "production" ] ; then
+            git clean -f || true
+        fi
 		git pull --strategy-option=theirs origin $GIT_CLONE_REF
 		if [ -f *.sql* ] ; then
             mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
@@ -436,8 +438,6 @@ while true; do
 			git config user.name "Hubelia - Wordpress Deploy"
 			git commit -am "Publish to Production - $(date)"
 			git pull --strategy-option=theirs origin $GIT_CLONE_REF
-            git reflog expire --expire=now --all
-            git gc --aggressive --prune=now
 			echo $GIT_CLONE_URL_CLEAN
 			git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git push

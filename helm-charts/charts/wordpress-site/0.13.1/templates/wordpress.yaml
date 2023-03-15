@@ -128,7 +128,7 @@ spec:
           name: {{ include "wordpress-site.fullname" . }}-db
           key: PASSWORD
     - name: WP_ENV
-      value: 'staging'
+      value: 'production'
     - name: DB_NAME
       valueFrom:
         secretKeyRef:
@@ -166,7 +166,7 @@ spec:
       - secretRef:
           name: {{ include "wordpress-site.fullname" . }}-bootstrap
     {{- end }}
-    
+
     env:
     {{- if .Values.global.site.bootstrap.old_url }}
       - name: WORDPRESS_BOOTSTRAP_OLD_URL
