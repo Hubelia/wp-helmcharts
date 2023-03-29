@@ -115,7 +115,6 @@ spec:
   {{- if and .Values.global.media .Values.global.media.persistentVolume.enabled }}
   media:
     persistentVolumeClaim:
-      volumeName: {{ include "wordpress-site.fullname" . }}-media
       storageClassName: {{ required "A valid Storage Class Name is required" .Values.global.media.persistentVolume.persistentVolumeClaim.storageClassName }}
       accessModes:
         - ReadWriteMany

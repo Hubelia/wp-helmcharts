@@ -106,8 +106,11 @@ find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
 
 set -x
 git config --global --add safe.directory '*'
-git clone "$GIT_CLONE_URL" "$SRC_DIR"
+git clone "$GIT_CLONE_URL" "/tmp/wordpress" --branch "$GIT_CLONE_REF"
 cd "$SRC_DIR"
+rsync -av "/tmp/wordpress/" "$SRC_DIR" && rm -rf "/tmp/wordpress/"
+rsync -av "$SRC_DIR/wp-content/uploads/" "/mnt/media/" || true
+ls -la
 if [ "$WP_ENV" = "staging" ] ; then
 	echo "Staging Environment - pulling deploy plugin"
 	if [ ! -z "$GITHUB_APP_ID" ] ; then
@@ -119,7 +122,6 @@ if [ "$WP_ENV" = "staging" ] ; then
 	cd "$SRC_DIR"
 fi
 git config --global --add safe.directory '*'
-git checkout -B "$GIT_CLONE_REF" "origin/$GIT_CLONE_REF"
 if [ -f *.sql* ] ; then
     mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "CREATE TABLE IF NOT EXISTS system_import (date DATETIME)"
     db_file=$(echo *.sql.gz.enc)
@@ -795,7 +797,7 @@ func (wp *Wordpress) gitCloneContainer() corev1.Container {
 	if wp.hasMediaMounts() && !wp.Spec.MediaVolumeSpec.ReadOnly {
 		m := corev1.VolumeMount{
 			Name:      mediaVolumeName,
-			MountPath: mediaSrcMountPath,
+			MountPath: "/mnt/media",
 		}
 		c.VolumeMounts = append(c.VolumeMounts, m)
 	}
@@ -861,7 +863,7 @@ func (wp *Wordpress) gitChangeWatcher() corev1.Container {
 	if wp.hasMediaMounts() && !wp.Spec.MediaVolumeSpec.ReadOnly {
 		m := corev1.VolumeMount{
 			Name:      mediaVolumeName,
-			MountPath: mediaSrcMountPath,
+			MountPath: "/mnt/media",
 		}
 		c.VolumeMounts = append(c.VolumeMounts, m)
 	}

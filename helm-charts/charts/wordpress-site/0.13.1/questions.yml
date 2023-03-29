@@ -16,10 +16,10 @@ questions:
     label: WordPress Image Version
   - variable: global.media.persistentVolume.enabled
     default: "false"
-    description: "Enable persistent volume for WordPress (Static Files)"
+    description: "Enable persistent volume for WordPress Medias (uploads) folder"
     type: boolean
     required: true
-    label: WordPress Persistent Volume Enabled
+    label: WordPress Medias (uploads) Persistent Volume Enabled
     show_subquestion_if: true
     group: "Resources"
     subquestions:
