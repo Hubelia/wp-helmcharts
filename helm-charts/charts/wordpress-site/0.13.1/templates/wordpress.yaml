@@ -18,7 +18,7 @@ spec:
   {{- end }}
   {{- end }}
   {{ if .Values.global.image.pullPolicy }}
-  imagePullPolicy: {{ .Values.global.image.pullPolicy }}
+  imagePullPolicy: "IfNotPresent"
   {{- end }}
   {{- if .Values.global.image.imagePullSecrets }}
   imagePullSecrets: {{ .Values.global.image.imagePullSecrets }}
@@ -112,6 +112,10 @@ spec:
         - name: GOOGLE_PROJECT_ID
           value: {{ required "A valid media.gcs.project is required!" .Values.global.media.gcs.project | quote }}
   {{- end }}
+  {{- if and .Values.global.media.persistentVolume.persistentVolumeClaim }}
+  media:
+    persistentVolumeClaim: {{ .Values.global.media.persistentVolume.persistentVolumeClaim }}
+  {{- end }}
   env:
     - name: MEMCACHED_DISCOVERY_HOST
       value: {{ include "wordpress-site.fullname" . }}-memcached
@@ -172,8 +176,10 @@ spec:
       - name: WORDPRESS_BOOTSTRAP_OLD_URL
         value: {{ .Values.global.site.bootstrap.old_url | b64enc | quote }}
     {{- end }}
+    {{- if .Values.global.staging.domains.first }}
       - name: WORDPRESS_BOOTSTRAP_STAGING_URL
         value: {{ .Values.global.staging.domains.first | b64enc | quote }}
+    {{- end }}
   {{- end }}
 
   affinity:

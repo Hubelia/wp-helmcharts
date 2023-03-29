@@ -777,7 +777,7 @@ func (wp *Wordpress) securityContext() *corev1.SecurityContext {
 }
 
 func (wp *Wordpress) gitCloneContainer() corev1.Container {
-	return corev1.Container{
+	c := corev1.Container{
 		Name:    "git",
 		Args:    []string{"/bin/bash", "-c", gitCloneScript},
 		Image:   options.GitCloneImage,
@@ -791,6 +791,16 @@ func (wp *Wordpress) gitCloneContainer() corev1.Container {
 		},
 		SecurityContext: wp.securityContext(),
 	}
+
+	if wp.hasMediaMounts() && !wp.Spec.MediaVolumeSpec.ReadOnly {
+		m := corev1.VolumeMount{
+			Name:      mediaVolumeName,
+			MountPath: mediaSrcMountPath,
+		}
+		c.VolumeMounts = append(c.VolumeMounts, m)
+	}
+
+	return c
 }
 
 func (wp *Wordpress) wpImportChanger() corev1.Container {
@@ -806,7 +816,7 @@ func (wp *Wordpress) wpImportChanger() corev1.Container {
 }
 
 func (wp *Wordpress) gitPushContainer() corev1.Container {
-	return corev1.Container{
+	c := corev1.Container{
 		Name:    "git-push",
 		Args:    []string{"/bin/bash", "-c", gitPushScript},
 		Image:   options.GitCloneImage,
@@ -820,10 +830,20 @@ func (wp *Wordpress) gitPushContainer() corev1.Container {
 		},
 		SecurityContext: wp.securityContext(),
 	}
+
+	if wp.hasMediaMounts() && !wp.Spec.MediaVolumeSpec.ReadOnly {
+		m := corev1.VolumeMount{
+			Name:      mediaVolumeName,
+			MountPath: mediaSrcMountPath,
+		}
+		c.VolumeMounts = append(c.VolumeMounts, m)
+	}
+
+	return c
 }
 
 func (wp *Wordpress) gitChangeWatcher() corev1.Container {
-	return corev1.Container{
+	c := corev1.Container{
 		Name:    "git-change-watcher",
 		Args:    []string{"/bin/bash", "-c", gitChangeWatcherScript},
 		Image:   options.GitCloneImage,
@@ -837,6 +857,16 @@ func (wp *Wordpress) gitChangeWatcher() corev1.Container {
 		},
 		SecurityContext: wp.securityContext(),
 	}
+
+	if wp.hasMediaMounts() && !wp.Spec.MediaVolumeSpec.ReadOnly {
+		m := corev1.VolumeMount{
+			Name:      mediaVolumeName,
+			MountPath: mediaSrcMountPath,
+		}
+		c.VolumeMounts = append(c.VolumeMounts, m)
+	}
+
+	return c
 }
 
 // nolint: funlen

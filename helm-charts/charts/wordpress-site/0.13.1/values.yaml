@@ -69,7 +69,9 @@ global:
     #    # reference: master
 
   media:
-    {}
+    persistentVolume:
+      enabled: false
+      persistentVolumeClaim: ""
     #  Store media library in a Google Cloud Storage bucket
     #  gcs:
     #    # google cloud project
