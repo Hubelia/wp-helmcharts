@@ -115,14 +115,14 @@ spec:
   {{- if and .Values.global.media.persistentVolume.enabled }}
   media:
     persistentVolumeClaim:
-      claimName: {{ include "wordpress-site.fullname" . }}-media
+      volumeName: {{ include "wordpress-site.fullname" . }}-media
       storageClassName: {{ required "A valid Storage Class Name is required" .Values.global.media.persistentVolume.persistentVolumeClaim.storageClassName }}
         accessModes:
-            - ReadWriteMany
+          - ReadWriteMany
+        persistentVolumeReclaimPolicy: Retain
         resources:
-            requests:
-                storage: {{ .Values.global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage }}
-
+          requests:
+            storage: {{ .Values.global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage }}
   {{- end }}
   env:
     - name: MEMCACHED_DISCOVERY_HOST
