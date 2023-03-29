@@ -25,9 +25,14 @@ questions:
     subquestions:
       - variable: global.media.persistentVolume.persistentVolumeClaim.storageClassName
         default: "longhorn"
-        description: "Choose an existing PVC to be used for WordPress Media (uploads) - or create a new one in Storage - Persistent Volume Claims"
+        description: "Storage Class to use"
         type: string
         label: Storage Class Name
+      - variable: global.media.persistentVolume.persistentVolumeClaim.accessModes
+        default: "ReadWriteMany"
+        description: "Choose between ReadWriteMany (multiple nodes) or ReadWriteOnce (single node)"
+        type: string
+        label: Storage Access Modes
       - variable: global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage
         default: "1Gi"
         description: "Persistent Volume Size"
