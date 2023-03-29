@@ -14,7 +14,7 @@ questions:
     type: string
     group: Wordpress Image Settings
     label: WordPress Image Version
-  - variable: global.persistence.enabled
+  - variable: global.media.persistentVolume.enabled
     default: "false"
     description: "Enable persistent volume for WordPress (Static Files)"
     type: boolean
@@ -23,8 +23,8 @@ questions:
     show_subquestion_if: true
     group: "Resources"
     subquestions:
-      - variable: global.persistence.persistentVolumeClaim
-        default: "0.5Gi"
+      - variable: global.media.persistentVolume.persistentVolumeClaim
+        default: ""
         description: "Choose an existing PVC to be used for WordPress Media (uploads) - or create a new one in Storage - Persistent Volume Claims"
         type: pvc
         label: WordPress Uploads Persistent Volume Claim
