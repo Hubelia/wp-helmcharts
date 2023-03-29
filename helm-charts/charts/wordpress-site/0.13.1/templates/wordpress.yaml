@@ -112,9 +112,17 @@ spec:
         - name: GOOGLE_PROJECT_ID
           value: {{ required "A valid media.gcs.project is required!" .Values.global.media.gcs.project | quote }}
   {{- end }}
-  {{- if and .Values.global.media.persistentVolume.persistentVolumeClaim }}
+  {{- if and .Values.global.media.persistentVolume.enabled }}
   media:
-    persistentVolumeClaim: {{ .Values.global.media.persistentVolume.persistentVolumeClaim }}
+    persistentVolumeClaim:
+      claimName: {{ include "wordpress-site.fullname" . }}-media
+      storageClassName: {{ required "A valid Storage Class Name is required" .Values.global.media.persistentVolume.persistentVolumeClaim.storageClassName }}
+        accessModes:
+            - ReadWriteMany
+        resources:
+            requests:
+                storage: {{ .Values.global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage }}
+
   {{- end }}
   env:
     - name: MEMCACHED_DISCOVERY_HOST

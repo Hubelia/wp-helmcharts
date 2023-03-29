@@ -23,11 +23,16 @@ questions:
     show_subquestion_if: true
     group: "Resources"
     subquestions:
-      - variable: global.media.persistentVolume.persistentVolumeClaim
-        default: ""
+      - variable: global.media.persistentVolume.persistentVolumeClaim.storageClassName
+        default: "longhorn"
         description: "Choose an existing PVC to be used for WordPress Media (uploads) - or create a new one in Storage - Persistent Volume Claims"
-        type: pvc
-        label: WordPress Uploads Persistent Volume Claim
+        type: string
+        label: Storage Class Name
+      - variable: global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage
+        default: "1Gi"
+        description: "Persistent Volume Size"
+        type: string
+        label: Storage Size
   - variable: global.site.domains.first
     default: ""
     description: "Site Domain 1"

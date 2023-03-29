@@ -71,7 +71,13 @@ global:
   media:
     persistentVolume:
       enabled: false
-      persistentVolumeClaim: ""
+      persistentVolumeClaim:
+         storageClassName: "longhorn"
+         accessModes:
+           - ReadWriteMany
+         resources:
+           requests:
+             storage: 1Gi
     #  Store media library in a Google Cloud Storage bucket
     #  gcs:
     #    # google cloud project
