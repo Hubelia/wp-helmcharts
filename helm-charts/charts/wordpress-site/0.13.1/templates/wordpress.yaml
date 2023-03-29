@@ -112,7 +112,7 @@ spec:
         - name: GOOGLE_PROJECT_ID
           value: {{ required "A valid media.gcs.project is required!" .Values.global.media.gcs.project | quote }}
   {{- end }}
-  {{- if and .Values.global.media.persistentVolume.enabled }}
+  {{- if and .Values.global.media .Values.global.media.persistentVolume.enabled }}
   media:
     persistentVolumeClaim:
       volumeName: {{ include "wordpress-site.fullname" . }}-media
