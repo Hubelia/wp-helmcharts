@@ -133,10 +133,10 @@ mysqlClustersGlobalServiceMonitor:
 
 orchestrator:
   image:
-    repository: ghcr.io/hubelia/mysql-operator-orchestrator:latest
+    repository: ghcr.io/hubelia/mysql-operator-orchestrator
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: latest
 
   securityContext: {}
     # capabilities:
