@@ -43,7 +43,7 @@ keywords:
 - orchestrator
 - bitpoke
 - database
-kubeVersion: '>= 1.19.0-0'
+kubeVersion: '>= 1.25.0-0'
 name: mysql-operator
 sources:
 - https://github.com/bitpoke/mysql-operator.git
