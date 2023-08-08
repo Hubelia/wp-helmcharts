@@ -116,8 +116,11 @@ spec:
   media:
     persistentVolumeClaim:
       storageClassName: {{ required "A valid Storage Class Name is required" .Values.global.media.persistentVolume.persistentVolumeClaim.storageClassName }}
-      accessModes:
-        - {{ default "ReadWriteMany" .Values.global.media.persistentVolume.persistentVolumeClaim.accessModes }}
+      {{- if .Values.global.media.persistentVolume.persistentVolumeClaim.accessModes }}
+      accessModes: {{ .Values.global.media.persistentVolume.persistentVolumeClaim.accessModes }}
+      {{- else }}
+      accessModes: [ "ReadWriteMany" ]
+      {{- end }}
       resources:
         requests:
           storage: {{ .Values.global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage }}
