@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mysql-table-sync
+  namespace: wordpress-manager
+spec:
+  schedule: "*/30 * * * *" # Run every 30 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: mysql-table-sync
+              image: ghcr.io/hubelia/wp-stack-sqlsync-cron:latest
+              volumeMounts:
+                - name: script-volume
+                  mountPath: /sync_mysql_tables.sh
+                  subPath: sync_mysql_tables.sh
+                - name: backup-volume
+                  mountPath: /backups
+                - name: kubeconfig-volume
+                  mountPath: /root/.kube/config
+                  subPath: localkubeconfig.yaml
+              command: ["/bin/bash", "/sync_mysql_tables.sh"]
+              env:
+                - name: DEPLOYMENTS
+                  value: "example:[table1, table2]"
+          volumes:
+            - name: script-volume
+              configMap:
+                name: mysql-table-sync-script
+            - name: backup-volume
+              persistentVolumeClaim:
+                claimName: mysql-backup-pvc
+            - name: kubeconfig-volume
+              secret:
+                secretName: kubeconfig
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-backup-pvc
+  namespace: wordpress-manager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: longhorn
