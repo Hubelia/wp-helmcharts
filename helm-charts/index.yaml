@@ -3,7 +3,7 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-08-08T12:02:52.659405405-04:00"
+    created: "2023-08-08T12:06:48.949002008-04:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
@@ -15,7 +15,7 @@ entries:
   stack:
   - apiVersion: v2
     appVersion: v0.13.2
-    created: "2023-08-08T12:02:52.674828584-04:00"
+    created: "2023-08-08T12:06:48.964010454-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -35,7 +35,7 @@ entries:
       repository: file://../git-webhook
       version: 0.0.1+master
     description: Your Open-Source, Cloud-Native WordPress Infrastructure
-    digest: a1ec97081774ea4171075e3faf8ec169f92a6b4d5474aa1ded1cec08b1f2c304
+    digest: 345a9b8037ad2c0e7b0c94e30252cde461ae0f8318ae965429233902efe6876f
     home: https://www.bitpoke.io/stack/
     icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
     keywords:
@@ -55,7 +55,7 @@ entries:
     version: 0.13.2
   - apiVersion: v2
     appVersion: v0.13.1
-    created: "2023-08-08T12:02:52.670209213-04:00"
+    created: "2023-08-08T12:06:48.960689932-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -95,7 +95,7 @@ entries:
     version: 0.13.1
   - apiVersion: v2
     appVersion: v0.13.0
-    created: "2023-08-08T12:02:52.666894509-04:00"
+    created: "2023-08-08T12:06:48.956941144-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -135,7 +135,7 @@ entries:
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-08-08T12:02:52.663264962-04:00"
+    created: "2023-08-08T12:06:48.952667773-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -178,7 +178,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.2
-    created: "2023-08-08T12:02:52.677902485-04:00"
+    created: "2023-08-08T12:06:48.966136314-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -209,7 +209,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.1
-    created: "2023-08-08T12:02:52.677183626-04:00"
+    created: "2023-08-08T12:06:48.965681613-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -240,7 +240,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.0
-    created: "2023-08-08T12:02:52.676453942-04:00"
+    created: "2023-08-08T12:06:48.965230565-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -271,7 +271,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-08-08T12:02:52.675752846-04:00"
+    created: "2023-08-08T12:06:48.964765097-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -298,4 +298,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-08-08T12:02:52.659008899-04:00"
+generated: "2023-08-08T12:06:48.948748398-04:00"
