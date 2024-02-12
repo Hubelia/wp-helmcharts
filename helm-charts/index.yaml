@@ -3,19 +3,19 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2023-10-18T11:46:45.850589419-04:00"
+    created: "2024-02-12T09:39:29.543828845-05:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
     name: atmoz-sftp
     type: application
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/atmoz-sftp-0.12.9.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/atmoz-sftp-0.12.9.tgz
     version: 0.12.9
   stack:
   - apiVersion: v2
     appVersion: v0.13.2
-    created: "2023-10-18T11:46:45.866287145-04:00"
+    created: "2024-02-12T09:39:29.560837558-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -51,11 +51,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.2.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/stack-0.13.2.tgz
     version: 0.13.2
   - apiVersion: v2
     appVersion: v0.13.1
-    created: "2023-10-18T11:46:45.862966638-04:00"
+    created: "2024-02-12T09:39:29.556892821-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -91,11 +91,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.1.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/stack-0.13.1.tgz
     version: 0.13.1
   - apiVersion: v2
     appVersion: v0.13.0
-    created: "2023-10-18T11:46:45.85863499-04:00"
+    created: "2024-02-12T09:39:29.553015752-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -131,11 +131,11 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.13.0.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/stack-0.13.0.tgz
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2023-10-18T11:46:45.854290981-04:00"
+    created: "2024-02-12T09:39:29.548125887-05:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -171,14 +171,45 @@ entries:
     sources:
     - https://github.com/hubelia-wp/stack
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.12.9.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/stack-0.12.9.tgz
     version: 0.12.9
   wordpress-site:
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
+    appVersion: 0.14.1
+    created: "2024-02-12T09:39:29.563788604-05:00"
+    dependencies:
+    - condition: global.staging.create_staging_env
+      name: wordpress-site-stg
+      repository: http://localhost:10191
+      version: 0.14.1
+    description: Helm chart for deploying a WordPress sites on Kubernetes.
+    digest: 4bbe0e778569d7cb6bc3e004619dbaa31e807e65e74cf0d5d481e0bc8b25883d
+    keywords:
+    - wordpress
+    - CMS
+    - Web Application
+    - application
+    - web
+    - http
+    - php
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - email: hello@hubelia.com
+      name: Hubelia
+      url: https://www.hubelia.com
+    name: wordpress-site
+    sources:
+    - https://github.com/Hubelia/wp-helmcharts
+    urls:
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.14.1.tgz
+    version: 0.14.1
+  - annotations:
+      github.io/license: Apache-2.0
+    apiVersion: v2
     appVersion: 0.14.0
-    created: "2023-10-18T11:46:45.868911172-04:00"
+    created: "2024-02-12T09:39:29.56335339-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -203,13 +234,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.14.0.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.14.0.tgz
     version: 0.14.0
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.2
-    created: "2023-10-18T11:46:45.868438487-04:00"
+    created: "2024-02-12T09:39:29.562914563-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -234,13 +265,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.2.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.13.2.tgz
     version: 0.13.2
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.1
-    created: "2023-10-18T11:46:45.86791665-04:00"
+    created: "2024-02-12T09:39:29.562332478-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -265,13 +296,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.1.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.13.1.tgz
     version: 0.13.1
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.0
-    created: "2023-10-18T11:46:45.867188694-04:00"
+    created: "2024-02-12T09:39:29.561701905-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -296,13 +327,13 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.13.0.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.13.0.tgz
     version: 0.13.0
   - annotations:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2023-10-18T11:46:45.866752669-04:00"
+    created: "2024-02-12T09:39:29.561278079-05:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -327,6 +358,6 @@ entries:
     sources:
     - https://github.com/Hubelia/wp-helmcharts
     urls:
-    - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
+    - https://hubelia.github.io/crunchy-pgo-helm/charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2023-10-18T11:46:45.850332724-04:00"
+generated: "2024-02-12T09:39:29.543565418-05:00"

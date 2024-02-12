@@ -150,7 +150,7 @@ if [ -f *.sql* ] ; then
     fi
     if [ "$IMPORT_DB" = true ] ; then
         echo "Importing database"
-        mysqldump -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > /tmp/$DB_NAME.sql.gz || true
+        mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > /tmp/$DB_NAME.sql.gz || true
         CURRENTDATE=$(date +%Y-%m-%d\-%H:%M:%S)
         echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in /tmp/$DB_NAME.sql.gz -out /tmp/${DB_NAME}_${CURRENTDATE}.sql.gz.enc -pass stdin || true
         echo "CURRENTDATE: $CURRENTDATE"
@@ -176,14 +176,14 @@ export STAGING_URL=$(echo $WORDPRESS_BOOTSTRAP_STAGING_URL | base64 --decode)
 if [ ! -z "$DECODED_URL" ] ; then
 	echo $DECODED_URL
 	echo $WP_HOME
-    wp search-replace https://$DECODED_URL $WP_HOME --allow-root
-	wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+    wp search-replace https://$DECODED_URL $WP_HOME --allow-root --all-tables
+	wp search-replace http://$DECODED_URL $WP_HOME --allow-root --all-tables
 fi
 if [ ! -z "$STAGING_URL" ] ; then
 	echo $STAGING_URL
 	echo $WP_HOME
-    wp search-replace https://$STAGING_URL $WP_HOME --allow-root
-	wp search-replace http://$STAGING_URL $WP_HOME --allow-root
+    wp search-replace https://$STAGING_URL $WP_HOME --allow-root --all-tables
+	wp search-replace http://$STAGING_URL $WP_HOME --allow-root --all-tables
 fi
 wp rewrite flush --allow-root
 `
@@ -198,16 +198,17 @@ while true; do
 		if [ ! -z "$DECODED_URL" ] ; then
 			echo $DECODED_URL
 			echo $WP_HOME
-			wp search-replace https://$DECODED_URL $WP_HOME --allow-root
-			wp search-replace http://$DECODED_URL $WP_HOME --allow-root
+			wp search-replace https://$DECODED_URL $WP_HOME --allow-root --all-tables
+			wp search-replace http://$DECODED_URL $WP_HOME --allow-root --all-tables
 		fi
 		if [ ! -z "$STAGING_URL" ] ; then
 			echo $STAGING_URL
 			echo $WP_HOME
-			wp search-replace https://$STAGING_URL $WP_HOME --allow-root
-			wp search-replace http://$STAGING_URL $WP_HOME --allow-root
+			wp search-replace https://$STAGING_URL $WP_HOME --allow-root --all-tables
+			wp search-replace http://$STAGING_URL $WP_HOME --allow-root --all-tables
 		fi
 		wp rewrite flush --allow-root
+		wp cli cache clear
 		rm -rf $WP_CONTENT_DIR/deployed
 	fi
 	sleep 60;
@@ -361,7 +362,7 @@ while true; do
             if [[ -n "$last_import" && "$db_date" > "$last_import" ]] || [[ -z "$last_import" ]]; then
                 export IMPORT_DB=true
                 rm -rf *.sql || true
-                mysqldump -h $DB_HOST -u $DB_USER -p $DB_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > /tmp/$DB_NAME.sql.gz || true
+                mysqldump -h $DB_HOST -u $DB_USER -p$DB_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 | gzip -8 > /tmp/$DB_NAME.sql.gz || true
                 CURRENTDATE=$(date +%Y-%m-%d\-%H:%M:%S)
                 echo $DB_ENCRYPTION_KEY | openssl aes-256-cbc -a -salt -pbkdf2 -in /tmp/$DB_NAME.sql.gz -out /tmp/${DB_NAME}_${CURRENTDATE}.sql.gz.enc -pass stdin || true
                 echo "CURRENTDATE: $CURRENTDATE"
@@ -394,7 +395,7 @@ while true; do
 		fi
 		cd /
 	fi
-	echo "Done, sleeping 2
+	echo "Done, sleeping 2 minutes"
 	sleep 120;
 done
 `
@@ -476,7 +477,7 @@ while true; do
 		echo "Exporting database"
         git rm -f --cached *.sql || true
         git rm -f --cached *.sql.gz || true
-		mysqldump -h $DB_HOST -u root -p $DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 \
+		mysqldump -h $DB_HOST -u root -p$DB_ROOT_PASSWORD $DB_NAME --hex-blob --default-character-set=utf8 \
 		--ignore-table=$DB_NAME.system_import --ignore-table=$DB_NAME.wp_gf_entry \
 		--ignore-table=$DB_NAME.wp_gf_entry_meta --ignore-table=$DB_NAME.wp_gf_entry_notes --ignore-table=$DB_NAME.wp_db7_forms \
 		--ignore-table=$DB_NAME.wp_commentmeta --ignore-table=$DB_NAME.wp_comments | gzip -8 > ./$DB_NAME.sql.gz
@@ -496,9 +497,9 @@ while true; do
 			git config user.email "deploy@hubelia.dev"
 			git config user.name "Hubelia - Wordpress Deploy"
 			git commit -am "Publish to Production - $(date)"
+      echo $GIT_CLONE_URL_CLEAN
+      git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git pull --strategy-option=theirs origin $GIT_CLONE_REF
-			echo $GIT_CLONE_URL_CLEAN
-			git remote set-url origin $GIT_CLONE_URL_CLEAN
 			git push
 			mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
 			if [ ! -z "$PROD_GIT_CLONE_BRANCH" ] ; then

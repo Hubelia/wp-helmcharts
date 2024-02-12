@@ -1,0 +1,272 @@
+categories:
+  - Blog
+  - CMS
+questions:
+  - variable: global.image.repository
+    default: "hubelia/wordpress-runtime"
+    description: "Image Repository"
+    type: string
+    group: Wordpress Image Settings
+    label: WordPress Image Repository
+  - variable: global.image.tag
+    default: "6.4.3-php-8.2"
+    description: "Wordpress Image Version"
+    type: string
+    group: Wordpress Image Settings
+    label: WordPress Image Version
+  - variable: global.media.persistentVolume.enabled
+    default: "false"
+    description: "Enable persistent volume for WordPress Medias (uploads) folder"
+    type: boolean
+    required: true
+    label: WordPress Medias (uploads) Persistent Volume Enabled
+    show_subquestion_if: true
+    group: "Resources"
+    subquestions:
+      - variable: global.media.persistentVolume.persistentVolumeClaim.storageClassName
+        default: "longhorn"
+        description: "Storage Class to use"
+        type: string
+        label: Storage Class Name
+      - variable: global.media.persistentVolume.persistentVolumeClaim.accessModes
+        default: "ReadWriteMany"
+        description: "Choose between ReadWriteMany (multiple nodes) or ReadWriteOnce (single node)"
+        type: string
+        label: Storage Access Modes
+      - variable: global.media.persistentVolume.persistentVolumeClaim.resources.requests.storage
+        default: "1Gi"
+        description: "Persistent Volume Size"
+        type: string
+        label: Storage Size
+  - variable: global.site.domains.first
+    default: ""
+    description: "Site Domain 1"
+    type: string
+    required: true
+    label: Site Domain 1
+    group: "Site Settings"
+  - variable: global.site.domains.second
+    default: ""
+    description: "Site Domain 2"
+    type: string
+    required: false
+    label: Site Domain 2
+    group: "Site Settings"
+  - variable: global.site.domains.third
+    default: ""
+    description: "Site Domain 3"
+    type: string
+    required: false
+    label: Site Domain 3
+    group: "Site Settings"
+  - variable: global.site.domains.forth
+    default: ""
+    description: "Site Domain 4"
+    type: string
+    required: false
+    label: Site Domain 4
+    group: "Site Settings"
+  - variable: global.site.domains.fifth
+    default: ""
+    description: "Site Domain 5"
+    type: string
+    required: false
+    label: Site Domain 5
+    group: "Site Settings"
+  - variable: global.site.env
+    default: "[]"
+    description: 'Wordpress Environment Variables - Careful, not encrypted...  Use this template for the key/value pair ex: ''[{"MARIADB_HOST":"1.1.1.1","MARIADB_PASSWORD":"yoursupersecurepassword"}]'''
+    type: string
+    label: Wordpress Environment Variables
+    group: "Site Settings"
+  - variable: global.site.bootstrap.enabled
+    default: "false"
+    description: "Bootstrap Wordpress or change old URL"
+    type: boolean
+    required: true
+    label: Bootstrap Wordpress
+    show_subquestion_if: true
+    group: "Bootstrap"
+    subquestions:
+      - variable: global.site.bootstrap.old_url
+        default: ""
+        description: "Type the domain that is currently in use if importing an existing database"
+        type: string
+        label: Old Wordpress URL
+      # - variable: global.site.bootstrap.title
+      #   default: "longhorn"
+      #   description: "If undefined or null, uses the default StorageClass. Default to longhorn - change if you know what you are doing..."
+      #   type: storageclass
+      #   label: Default StorageClass for WordPress
+  - variable: global.site.envFrom[0]
+    default: ""
+    description: "Wordpress Environment Variables - From Secret (for sensitive information.  Make sure all the Variables needed are in the secret"
+    type: secret
+    label: Wordpress Environment Variables - Secrets
+    group: "Site Settings"
+  - variable: global.code.git.repository
+    description: "Git Repository"
+    type: string
+    default: "https://github.com/Hubelia/wordpress-base"
+    required: true
+    label: Git Repository
+    group: "Git and Code Configuration"
+  - variable: global.code.git.reference
+    default: "main"
+    description: "Git Branch - reference.  You can use the branch or the commit reference ie: 3df6701bd06d97a3954b18625926753f6246c266 (recommended) "
+    type: string
+    required: true
+    label: Git Branch
+    group: "Git and Code Configuration"
+  - variable: global.code.db.encrypt_db_export
+    default: "false"
+    description: "Encrypt the database export/import"
+    type: boolean
+    required: false
+    label: Encrypt DB Exports/Imports
+    show_subquestion_if: true
+    group: "Git and Code Configuration"
+    subquestions:
+      - variable: global.code.db.encryption_key
+        description: "Secret for encrypting/decrypting exports/imports of the database.  Opaque secret with the key 'encryption_key' "
+        type: secret
+        required: false
+        label: DB Encryption Key
+  - variable: global.code.git.use_github_app
+    default: "false"
+    description: "Use Github App to pull/push to github"
+    type: boolean
+    required: false
+    label: Use Github App
+    show_subquestion_if: true
+    group: "Git Authentication Configuration"
+    subquestions:
+      - variable: global.code.git.github_app_secret
+        description: "Select Secret.  It should have 2 keys app_id (application ID in Github), and 1 private_key (private key in Github)"
+        required: false
+        type: secret
+        label: Github App Secret
+  - variable: global.code.git.use_ssh_key
+    default: "false"
+    description: "Use Github with SSH Key.  If Use Github App is selected, this will be ignored"
+    type: boolean
+    required: false
+    label: Use SSH Key
+    show_subquestion_if: true
+    group: "Git Authentication Configuration"
+    subquestions:
+      - variable: global.code.git.ssh_private_key
+        default: ""
+        description: "Git Secret - SSH Private Key"
+        type: secret
+        label: Git Secret (If using a private repository)
+  - variable: global.code.contentSubPath
+    default: "wp-content/"
+    description: "Code Location"
+    type: string
+    label: Code location path
+    group: "Git and Code Configuration"
+  - variable: global.code.readOnly
+    default: "false"
+    description: "Code protection against write (recommended for production)"
+    type: boolean
+    label: Code Write Protection
+    group: "Git and Code Configuration"
+  - variable: global.site.resources.override
+    default: "false"
+    description: "Override Resources Allocations Defaults"
+    type: boolean
+    required: false
+    label: Override Resources Allocations
+    show_subquestion_if: true
+    group: "Resources"
+    subquestions:
+      - variable: global.site.resources.limits.cpu
+        default: "400m"
+        description: "CPU Limit"
+        type: string
+        label: CPU Limit
+      - variable: global.site.resources.limits.memory
+        default: "0.7Gi"
+        description: "Memory Limit"
+        type: string
+        label: Memory Limit
+      - variable: global.site.resources.requests.cpu
+        default: "200m"
+        description: "CPU Request (allocated to the instance)"
+        type: string
+        label: CPU Request
+      - variable: global.site.resources.requests.memory
+        default: "0.512Gi"
+        description: "Memory Request"
+        type: string
+        label: Memory Request
+  - variable: global.staging.create_staging_env
+    default: "false"
+    description: "Enable Staging Environment"
+    type: boolean
+    required: false
+    label: Enable Staging Environment
+    group: "Staging Environment"
+    show_subquestion_if: true
+    subquestions:
+      - variable: global.staging.git.reference
+        default: "staging"
+        description: "Staging Branch"
+        type: string
+        label: Staging Branch
+      - variable: global.staging.domains.first
+        default: ""
+        description: "Staging Site Domain 1"
+        type: string
+        required: true
+        label: Site Domain 1
+      - variable: global.staging.domains.second
+        default: ""
+        description: "Staging Site Domain 2"
+        type: string
+        required: false
+        label: Site Domain 2
+      - variable: global.staging.domains.third
+        default: ""
+        description: "Staging Site Domain 3"
+        type: string
+        required: false
+        label: Site Domain 3
+      - variable: global.staging.domains.forth
+        default: ""
+        description: "Staging Site Domain 4"
+        type: string
+        required: false
+        label: Site Domain 4
+      - variable: global.staging.domains.fifth
+        default: ""
+        description: "Staging Site Domain 5"
+        type: string
+        required: false
+        label: Site Domain 5
+# site:
+#   resources: {}
+# to automatically install wordpress
+# bootstrap:
+# title: Demo site
+# email: ping@<your domain name>
+# user:
+# password:
+
+# tls: {}
+# issuerKind: ClusterIssuer
+# issuerName: wp-manager-stack-default-certificate-issuer
+# acmeChallengeType: http01
+
+#  media: {}
+#  Store media library in a Google Cloud Storage bucket
+#  gcs:
+#    # google cloud project
+#    project: staging
+#    # bucket name
+#    bucket: calins-wordpress-runtime-playground
+#    # use a prefix inside the bucket to store the media files
+#    prefix: mysite/
+#    # credentials to access Google Cloud Storage
+#    google_credentials: >
