@@ -1,0 +1,9 @@
+Hubelia Stack, your open-source, cloud native WordPress infrastructure has been successfully deployed.
+
+Create your first site by running:
+
+  # helm install mysite bitpoke/wordpress-site --set site.domains[0]=www.example.com
+
+Then point your DNS to the Ingres IP. You can find the ingress IP by running:
+
+  # kubectl get ingress mysite -o jsonpath='{.status.loadBalancer.ingress[*].ip}{"\n"}'

@@ -1,0 +1,43 @@
+letsencrypt:
+  enabled: false
+  email: ""
+  server: "https://acme-v02.api.letsencrypt.org/directory"
+
+wordpress-operator:
+  enabled: true
+  extraArgs:
+    - --ingress-class=hubelia-wp-stack
+
+mysql-operator:
+  enabled: true
+  orchestrator:
+    topologyPassword: this-must-be-set-in-stone-because-of-mysql-operator-bug-75
+    replicas: 1
+
+nginx-ingress:
+  enabled: true
+  controller:
+    ingressClassResource:
+      name: hubelia-wp-stack
+      controllerValue: "hubelia.io/stack"
+    config:
+      proxy-buffer-size: 64k
+      custom-http-errors: 502,503,504
+      hsts-preload: "true"
+    addHeaders:
+      server: "nginx"
+    publishService:
+      enabled: true
+    extraArgs:
+      ingress-class: hubelia-wp-stack
+      default-ssl-certificate: wordpress-manager/stack-ingress-default
+  defaultBackend:
+    enabled: true
+    image:
+      registry: docker.io
+      image: bitpoke/stack-default-backend
+      tag: latest
+      pullPolicy: Always
+
+git-webhook:
+  enabled: false

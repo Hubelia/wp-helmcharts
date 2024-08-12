@@ -1,0 +1,27 @@
+annotations:
+  github.io/license: Apache-2.0
+apiVersion: v2
+appVersion: 0.14.3
+description: Helm chart for deploying a WordPress sites on Kubernetes.
+keywords:
+  - wordpress
+  - CMS
+  - Web Application
+  - application
+  - web
+  - http
+  - php
+kubeVersion: ">= 1.25.0-0"
+maintainers:
+  - email: hello@hubelia.com
+    name: Hubelia
+    url: https://www.hubelia.com
+name: wordpress-site
+sources:
+  - https://github.com/Hubelia/wp-helmcharts
+version: 0.14.3
+dependencies:
+  - name: wordpress-site-stg
+    repository: http://localhost:10191
+    condition: global.staging.create_staging_env
+    version: 0.14.3

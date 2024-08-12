@@ -3,7 +3,7 @@ entries:
   atmoz-sftp:
   - apiVersion: v2
     appVersion: "10"
-    created: "2024-06-17T11:40:13.617206976-04:00"
+    created: "2024-08-12T09:32:22.267793697-04:00"
     description: A Helm chart for SFTP
     digest: 962f1eef1050cc60c890f11f4e99b42e7b2dbfa7a7c3fa253746ecc7c51f3bc5
     icon: https://raw.githubusercontent.com/atmoz/sftp/master/openssh.png
@@ -14,8 +14,48 @@ entries:
     version: 0.12.9
   stack:
   - apiVersion: v2
+    appVersion: v0.14.3
+    created: "2024-08-12T09:32:22.291908327-04:00"
+    dependencies:
+    - condition: mysql-operator.enabled
+      name: mysql-operator
+      repository: https://hubelia.github.io/wp-helmcharts
+      version: 0.6.2
+    - condition: wordpress-operator.enabled
+      name: wordpress-operator
+      repository: https://hubelia.github.io/wp-helmcharts
+      version: 0.14.3
+    - alias: nginx-ingress
+      condition: nginx-ingress.enabled
+      name: ingress-nginx
+      repository: https://kubernetes.github.io/ingress-nginx
+      version: 4.2.5
+    - condition: git-webhook.enabled
+      name: git-webhook
+      repository: file://../git-webhook
+      version: 0.0.1+master
+    description: Your Open-Source, Cloud-Native WordPress Infrastructure
+    digest: 9872a0957ad055beb0624f5429036b8ebbdf8107ec2f0411f7d02d26b83b9dd6
+    home: https://www.bitpoke.io/stack/
+    icon: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAAATlBMVEX///+hoaodIyfz8/StrbXQ0NRPUllvcXnb29++vsPt7e/n5+rW1tnExMm4uL6zs7qEhY1nanFfYmjc3N+srLWZmaKRkZlwcnktMjclKy/obea+AAAA60lEQVRYw+3PyQ3CQBQE0Z5vG7wv7OSfKDKX5jgj6ugK4Emlo6O9YbotUy+sMX1rBNWkZJHxLEKeRcqzCHiMaI8R7TGiPUa0x4j2GNEeI9pDxWtKrLgkWHwkWDwlWAxaDFoMWgxaDFoMWgxaDFoMWgxaDFoMWozfLhniWAK+7xliVQDG8//pKH7uSsCNBtcMsC0AXxlerQJwzfCqAvAMeKI90Z5oT7Qn2hPtifZEe6I90Z5oTxvsifY0w56qmvIsUp5FyrNIeRYpzyLlWaQ8i5RnkfUs2mNEe4xojxHtQWK3e3Mlrr5tBx0duQ8QNA2W1DHZ9QAAAABJRU5ErkJggg==
+    keywords:
+    - wordpress
+    - hubelia-wp
+    - Integration and Delivery
+    kubeVersion: '>= 1.19.0-0'
+    maintainers:
+    - email: hello@hubelia.io
+      name: hubelia-wp
+      url: https://www.hubelia.io
+    name: stack
+    sources:
+    - https://github.com/hubelia-wp/stack
+    urls:
+    - https://hubelia.github.io/wp-helmcharts/helm-charts/stack-0.14.3.tgz
+    version: 0.14.3
+  - apiVersion: v2
     appVersion: v0.13.2
-    created: "2024-06-17T11:40:13.633296481-04:00"
+    created: "2024-08-12T09:32:22.285085964-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -55,7 +95,7 @@ entries:
     version: 0.13.2
   - apiVersion: v2
     appVersion: v0.13.1
-    created: "2024-06-17T11:40:13.628625348-04:00"
+    created: "2024-08-12T09:32:22.280226135-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -95,7 +135,7 @@ entries:
     version: 0.13.1
   - apiVersion: v2
     appVersion: v0.13.0
-    created: "2024-06-17T11:40:13.624289685-04:00"
+    created: "2024-08-12T09:32:22.27567827-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -135,7 +175,7 @@ entries:
     version: 0.13.0
   - apiVersion: v2
     appVersion: v0.12.9
-    created: "2024-06-17T11:40:13.620866332-04:00"
+    created: "2024-08-12T09:32:22.271975462-04:00"
     dependencies:
     - condition: mysql-operator.enabled
       name: mysql-operator
@@ -178,7 +218,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.14.2
-    created: "2024-06-17T11:40:13.637229995-04:00"
+    created: "2024-08-12T09:32:22.300664197-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -209,7 +249,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.14.1
-    created: "2024-06-17T11:40:13.636775191-04:00"
+    created: "2024-08-12T09:32:22.299794448-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -240,7 +280,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.14.0
-    created: "2024-06-17T11:40:13.636322268-04:00"
+    created: "2024-08-12T09:32:22.298963929-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -271,7 +311,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.2
-    created: "2024-06-17T11:40:13.63586436-04:00"
+    created: "2024-08-12T09:32:22.297961838-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -302,7 +342,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.1
-    created: "2024-06-17T11:40:13.635393115-04:00"
+    created: "2024-08-12T09:32:22.296842716-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -333,7 +373,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.13.0
-    created: "2024-06-17T11:40:13.634748453-04:00"
+    created: "2024-08-12T09:32:22.295584433-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -364,7 +404,7 @@ entries:
       github.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 0.12.9
-    created: "2024-06-17T11:40:13.634020188-04:00"
+    created: "2024-08-12T09:32:22.294209391-04:00"
     dependencies:
     - condition: global.staging.create_staging_env
       name: wordpress-site-stg
@@ -391,4 +431,4 @@ entries:
     urls:
     - https://hubelia.github.io/wp-helmcharts/helm-charts/wordpress-site-0.12.9.tgz
     version: 0.12.9
-generated: "2024-06-17T11:40:13.616935328-04:00"
+generated: "2024-08-12T09:32:22.266292539-04:00"

@@ -105,7 +105,7 @@ find "$SRC_DIR" -maxdepth 1 -mindepth 1 -print0 | xargs -0 /bin/rm -rf
 
 set -x
 git config --global --add safe.directory '*'
-git clone "$GIT_CLONE_URL" "/tmp/wordpress" --branch "$GIT_CLONE_REF"
+git clone "$GIT_CLONE_URL" "/tmp/wordpress" --depth 1 --branch "$GIT_CLONE_REF"
 cd "$SRC_DIR"
 echo "Synching uploads...  This may take some time depending on the amount of files"
 set +e
@@ -163,6 +163,7 @@ if [ -f *.sql* ] ; then
         touch $SRC_DIR/wp-content/deployed
         mkdir -p $SRC_DIR/wp-content/languages
         mysql --host=$DB_HOST --user=$DB_USER --password=$DB_PASSWORD $DB_NAME -e "INSERT INTO system_import (date) VALUES (NOW())"
+        ls -1t /mnt/media/.backupdb/wordpress_*.sql.gz.enc | tail -n +6 | xargs rm -f
 	else
 		echo "No database changes, skipping import..."
     fi
@@ -1087,7 +1088,7 @@ func (wp *Wordpress) readinessProbe() *corev1.Probe {
 				HTTPHeaders: []corev1.HTTPHeader{
 					{
 						Name:  "Host",
-						Value: wp.MainDomain(),
+						Value: "127.0.0.1",
 					},
 				},
 			},
